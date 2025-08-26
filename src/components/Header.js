@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { useLanguage } from '../contexts/LanguageContext';
 import { t } from '../utils/translations';
+import { IoLanguage, IoCheckmark } from 'react-icons/io5';
 
 const HeaderContainer = styled.header`
   width: 100%;
@@ -109,14 +110,10 @@ const LanguageButton = styled.button`
   transition: all 0.2s ease;
   width: 100px;
   
-  &::before {
-    content: '';
-    width: 18px;
-    height: 18px;
-    background: url('/assets/svg/languageIcon.svg') center/cover;
-    display: inline-block;
-    filter: invert(15%) sepia(100%) saturate(500%) hue-rotate(75deg) brightness(0.4) contrast(1.2);
-    transition: filter 0.2s ease;
+  .language-icon {
+    font-size: 18px;
+    color: #1e1e1e;
+    transition: color 0.2s ease;
   }
   
   &:hover {
@@ -124,8 +121,8 @@ const LanguageButton = styled.button`
     color: white;
     border-color: #2d2d2d;
     
-    &::before {
-      filter: invert(1);
+    .language-icon {
+      color: white;
     }
   }
 `;
@@ -256,15 +253,12 @@ const MobileNavLink = styled(Link)`
   
   ${props => props.$isActive && `
     color: #2d2d2d;
-    
-    &::after {
-      content: '';
-      width: 20px;
-      height: 20px;
-      background: url('/assets/svg/checkIcon.svg') center/cover;
-      display: inline-block;
-    }
   `}
+  
+  .check-icon {
+    font-size: 20px;
+    color: #2d2d2d;
+  }
 `;
 
 const MobileLanguageSection = styled.div`
@@ -375,6 +369,7 @@ const Header = () => {
         
         <LanguageContainer ref={dropdownRef}>
           <LanguageButton onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
+            <IoLanguage className="language-icon" />
             {currentLanguageName}
           </LanguageButton>
           <DropdownMenu show={isDropdownOpen}>
@@ -406,6 +401,7 @@ const Header = () => {
               onClick={() => setIsMobileMenuOpen(false)}
             >
               {t('navigation.about', language)}
+              {location.pathname === '/about' && <IoCheckmark className="check-icon" />}
             </MobileNavLink>
             <MobileNavLink 
               to="/works" 
@@ -413,6 +409,7 @@ const Header = () => {
               onClick={() => setIsMobileMenuOpen(false)}
             >
               {t('navigation.works', language)}
+              {location.pathname === '/works' && <IoCheckmark className="check-icon" />}
             </MobileNavLink>
             <MobileNavLink 
               to="/contact" 
@@ -420,6 +417,7 @@ const Header = () => {
               onClick={() => setIsMobileMenuOpen(false)}
             >
               {t('navigation.contact', language)}
+              {location.pathname === '/contact' && <IoCheckmark className="check-icon" />}
             </MobileNavLink>
           </MobileNavSection>
           

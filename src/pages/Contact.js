@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { useLanguage } from '../contexts/LanguageContext';
 import { t } from '../utils/translations';
+import { IoCall, IoMail, IoLogoInstagram } from 'react-icons/io5';
 
 const ContactContainer = styled.div`
   min-height: calc(100vh - 112px);
@@ -39,36 +40,11 @@ const ContactItem = styled.div`
   font-size: 1rem;
   color: #333;
   
-  &::before {
-    content: '';
+  .contact-icon {
     width: 24px;
     height: 24px;
-    background: transparent;
-    border-radius: 2px;
     flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-repeat: no-repeat;
-    background-position: center;
-  }
-  
-  &:nth-child(1)::before {
-    background-image: url('/assets/svg/mobileIcon.svg');
-    background-size: 20px 20px;
-    filter: invert(15%) sepia(100%) saturate(500%) hue-rotate(75deg) brightness(0.4) contrast(1.2);
-  }
-  
-  &:nth-child(2)::before {
-    background-image: url('/assets/svg/mailIcon.svg');
-    background-size: 19px 19px;
-    filter: invert(15%) sepia(100%) saturate(500%) hue-rotate(75deg) brightness(0.4) contrast(1.2);
-  }
-  
-  &:nth-child(3)::before {
-    background-image: url('/assets/svg/instagramIcon.svg');
-    background-size: 21px 21px;
-    filter: invert(15%) sepia(100%) saturate(500%) hue-rotate(75deg) brightness(0.4) contrast(1.2);
+    color: #2d2d2d;
   }
 `;
 
@@ -80,9 +56,18 @@ const Contact = () => {
       <ContactContent>
         
         <ContactInfo>
-          <ContactItem>010-5164-5628</ContactItem>
-          <ContactItem>vusdo91@gmail.com</ContactItem>
-          <ContactItem>instagram.com/limyunmook</ContactItem>
+          <ContactItem>
+            <IoCall className="contact-icon" />
+            010-5164-5628
+          </ContactItem>
+          <ContactItem>
+            <IoMail className="contact-icon" />
+            vusdo91@gmail.com
+          </ContactItem>
+          <ContactItem>
+            <IoLogoInstagram className="contact-icon" />
+            instagram.com/limyunmook
+          </ContactItem>
         </ContactInfo>
       </ContactContent>
     </ContactContainer>

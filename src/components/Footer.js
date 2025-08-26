@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { IoCall, IoMail, IoLogoInstagram } from 'react-icons/io5';
 
 const FooterContainer = styled.footer`
   width: 100%;
@@ -54,24 +55,11 @@ const ContactItem = styled.a`
     opacity: 0.8;
   }
   
-  &::before {
-    content: '';
+  .contact-icon {
     width: 16px;
     height: 16px;
     flex-shrink: 0;
-    display: block;
-  }
-  
-  &:first-child::before {
-    background: url('/assets/svg/mobileIcon.svg') center/cover no-repeat;
-  }
-  
-  &:nth-child(2)::before {
-    background: url('/assets/svg/mailIcon.svg') center/cover no-repeat;
-  }
-  
-  &:nth-child(3)::before {
-    background: url('/assets/svg/instagramIcon.svg') center/cover no-repeat;
+    color: white;
   }
 `;
 
@@ -91,9 +79,18 @@ const Footer = () => {
   return (
     <FooterContainer>
       <ContactInfo>
-        <ContactItem href="tel:010-5164-5628">010-5164-5628</ContactItem>
-        <ContactItem href="mailto:vusdo91@gmail.com">vusdo91@gmail.com</ContactItem>
-        <ContactItem href="https://instagram.com/limyunmook" target="_blank" rel="noopener noreferrer">instagram.com/limyunmook</ContactItem>
+        <ContactItem href="tel:010-5164-5628">
+          <IoCall className="contact-icon" />
+          010-5164-5628
+        </ContactItem>
+        <ContactItem href="mailto:vusdo91@gmail.com">
+          <IoMail className="contact-icon" />
+          vusdo91@gmail.com
+        </ContactItem>
+        <ContactItem href="https://instagram.com/limyunmook" target="_blank" rel="noopener noreferrer">
+          <IoLogoInstagram className="contact-icon" />
+          instagram.com/limyunmook
+        </ContactItem>
       </ContactInfo>
       
       <Copyright>
