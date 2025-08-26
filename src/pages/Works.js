@@ -118,7 +118,10 @@ const NavigationArrows = styled.div`
   @media (max-width: 768px) {
     left: 0.5rem;
     right: 0.5rem;
-    top: calc(50% - 160px);
+    bottom: 1rem;
+    top: auto;
+    transform: none;
+    z-index: 10;
   }
 `;
 
@@ -401,6 +404,9 @@ const Works = () => {
   const [dragPosition, setDragPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [touchStart, setTouchStart] = useState({ x: 0, y: 0 });
+  const [touchEnd, setTouchEnd] = useState({ x: 0, y: 0 });
+  const [isSwiping, setIsSwiping] = useState(false);
   
   // Modal event handlers
   const handleZoomIn = () => {
@@ -501,6 +507,51 @@ const Works = () => {
     setDragPosition({ x: 0, y: 0 });
   };
   
+  const navigateImage = (direction) => {
+    if (direction === 'next') {
+      setActiveIndex(activeIndex === artworks.length - 1 ? 0 : activeIndex + 1);
+    } else {
+      setActiveIndex(activeIndex === 0 ? artworks.length - 1 : activeIndex - 1);
+    }
+  };
+  
+  // Touch handlers for main image swipe
+  const handleTouchStartMain = (e) => {
+    setIsSwiping(true);
+    setTouchStart({
+      x: e.touches[0].clientX,
+      y: e.touches[0].clientY
+    });
+  };
+  
+  const handleTouchMoveMain = (e) => {
+    if (!isSwiping) return;
+    setTouchEnd({
+      x: e.touches[0].clientX,
+      y: e.touches[0].clientY
+    });
+  };
+  
+  const handleTouchEndMain = () => {
+    if (!isSwiping) return;
+    setIsSwiping(false);
+    
+    const deltaX = touchStart.x - touchEnd.x;
+    const deltaY = Math.abs(touchStart.y - touchEnd.y);
+    const minSwipeDistance = 50;
+    
+    // Horizontal swipe should be more significant than vertical
+    if (Math.abs(deltaX) > minSwipeDistance && Math.abs(deltaX) > deltaY) {
+      if (deltaX > 0) {
+        // Swipe left - next image
+        navigateImage('next');
+      } else {
+        // Swipe right - previous image
+        navigateImage('prev');
+      }
+    }
+  };
+  
   // Keyboard controls
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -593,7 +644,10 @@ const Works = () => {
                 setZoomLevel(1);
                 setDragPosition({ x: 0, y: 0 });
               }}
-              style={{ cursor: 'pointer' }}
+              onTouchStart={handleTouchStartMain}
+              onTouchMove={handleTouchMoveMain}
+              onTouchEnd={handleTouchEndMain}
+              style={{ cursor: 'pointer', touchAction: 'manipulation' }}
             />
           </ImageContainer>
         </ImageSection>
