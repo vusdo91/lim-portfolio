@@ -3,7 +3,8 @@
     "allow": [
       "Bash(npm install:*)",
       "Bash(sed:*)",
-      "Bash(copy:*)"
+      "Bash(copy:*)",
+      "Bash(git add:*)"
     ],
     "deny": [],
     "ask": []
