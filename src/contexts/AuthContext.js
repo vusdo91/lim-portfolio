@@ -27,7 +27,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (username, password) => {
     // 실제로는 서버 API 호출해야 함
     // 여기서는 간단한 하드코딩된 인증
-    if (username === 'admin' && password === 'admin123!') {
+    if (username === 'admin' && password === 'dbsanr91!') {
       const token = 'fake-jwt-token-' + Date.now();
       localStorage.setItem('admin_token', token);
       setIsAuthenticated(true);
