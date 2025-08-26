@@ -25,26 +25,6 @@ const ContentArea = styled.div`
   flex-direction: column;
 `;
 
-const TitleSection = styled.div`
-  margin-bottom: 3rem;
-  
-  h1 {
-    font-size: 4rem;
-    line-height: 3.2rem;
-    color: #333;
-    margin: 0 0 0.5rem 0;
-    letter-spacing: 0.1rem;
-    
-    &.name-title {
-      color: #6D8142;
-    }
-    
-    @media (max-width: 768px) {
-      font-size: 3rem;
-      margin: 0 0 -0.5rem 0;
-    }
-  }
-`;
 
 const ContentWrapper = styled.div`
   width: 100%;
@@ -70,7 +50,7 @@ const Biography = styled.div`
 const SectionTitle = styled.h2`
   font-size: 1.25rem;
   font-weight: 600;
-  color: #1E1E1E;
+  color: #1a1a1a;
   margin-bottom: 2.5rem;
   
   @media (max-width: 768px) {
@@ -111,7 +91,7 @@ const ExhibitionYearGroup = styled.div`
 
 const ExhibitionYear = styled.div`
   font-weight: light;
-  color: #C8C8C8;
+  color: #b8b8b8;
   font-size: 1rem;
   min-width: 4rem;
   margin-right: 2rem;
@@ -156,7 +136,7 @@ const ExhibitionContent = styled.div`
 const SectionDivider = styled.div`
   width: 100%;
   height: 1px;
-  background-color: #D9D9D9;
+  background-color: #e0e0e0;
   margin: 4rem 0;
 `;
 
@@ -175,7 +155,7 @@ const ExhibitionItem = styled.div`
   
   .year {
     min-width: 4rem;
-    color: #C8C8C8;
+    color: #b8b8b8;
     font-size: 1rem;
     font-weight: 300;
     margin-right: 2rem;
@@ -264,10 +244,6 @@ const About = () => {
   return (
     <AboutContainer>
       <ContentArea>
-        <TitleSection>
-          <h1 className="coolvetica">{t('about.title', language)}</h1>
-          <h1 className="name-title coolvetica">{t('about.name', language)}</h1>
-        </TitleSection>
         
         <ContentWrapper>
           <Biography className="noto-sans">

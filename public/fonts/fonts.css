@@ -1,40 +1,10 @@
-/* Coolvetica Font Family */
+/* CreatoDisplay Light Font Family */
 @font-face {
-  font-family: 'Coolvetica';
-  src: url('./Coolvetica-Rg.otf') format('opentype');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Coolvetica';
-  src: url('./Coolvetica-Rg-It.otf') format('opentype');
-  font-weight: 400;
-  font-style: italic;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Coolvetica';
-  src: url('./Coolvetica-Hv-Comp.otf') format('opentype');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Coolvetica';
-  src: url('./Coolvetica-Rg-Cond.otf') format('opentype');
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Coolvetica';
-  src: url('./Coolvetica-Rg-Cram.otf') format('opentype');
-  font-weight: 600;
+  font-family: 'CreatoDisplay Light';
+  src: url('./CreatoDisplay-Light.otf') format('opentype'),
+       url('./CreatoDisplay-Light.woff2') format('woff2'),
+       url('./CreatoDisplay-Light.woff') format('woff');
+  font-weight: 300;
   font-style: normal;
   font-display: swap;
 }

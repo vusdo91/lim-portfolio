@@ -22,46 +22,8 @@ const ContactContent = styled.div`
   max-width: 500px;
 `;
 
-const TitleSection = styled.div`
-  margin-bottom: 3rem;
-  
-  h1 {
-    font-size: 4rem;
-    line-height: 3.2rem;
-    color: #333;
-    margin: 0 0 0.5rem 0;
-    letter-spacing: 0.1rem;
-    
-    &.name-title {
-      color: #6D8142;
-    }
-    
-    @media (max-width: 768px) {
-      font-size: 3rem;
-      margin: 0 0 -0.5rem 0;
-    }
-  }
-`;
 
 
-const ContactDescription = styled.div`
-  margin-bottom: 4rem;
-  
-  p {
-    font-size: 1rem;
-    color: #505050;
-    line-height: 1;
-    margin-bottom: 0.5rem;
-  }
-  
-  @media (max-width: 768px) {
-    margin-bottom: 3rem;
-    
-    p {
-      font-size: 1rem;
-    }
-  }
-`;
 
 const ContactInfo = styled.div`
   display: flex;
@@ -116,15 +78,6 @@ const Contact = () => {
   return (
     <ContactContainer>
       <ContactContent>
-        <TitleSection>
-          <h1 className="coolvetica">{t('contact.title', language)}</h1>
-          <h1 className="name-title coolvetica">{t('contact.name', language)}</h1>
-        </TitleSection>
-        
-        <ContactDescription>
-          <p>{t('contact.description.line1', language)}</p>
-          <p>{t('contact.description.line2', language)}</p>
-        </ContactDescription>
         
         <ContactInfo>
           <ContactItem>010-5164-5628</ContactItem>

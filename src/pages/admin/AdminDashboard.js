@@ -6,7 +6,7 @@ import { useProfile } from '../../contexts/ProfileContext';
 
 const DashboardContainer = styled.div`
   min-height: 100vh;
-  background: #f8f9fa;
+  background: #f5f5f5;
   overflow-y: auto;
   height: 100vh;
 `;
@@ -27,7 +27,7 @@ const Title = styled.h1`
 `;
 
 const LogoutButton = styled.button`
-  background: #dc3545;
+  background: #2d2d2d;
   color: white;
   border: none;
   padding: 0.5rem 1rem;
@@ -36,7 +36,7 @@ const LogoutButton = styled.button`
   transition: background 0.2s ease;
   
   &:hover {
-    background: #c82333;
+    background: #1a1a1a;
   }
 `;
 
@@ -76,7 +76,7 @@ const MenuCard = styled.div`
 `;
 
 const MenuTitle = styled.h3`
-  color: #6D8142;
+  color: #2d2d2d;
   margin: 0 0 0.5rem 0;
   font-size: 1.2rem;
 `;
@@ -105,7 +105,7 @@ const StatCard = styled.div`
 const StatNumber = styled.div`
   font-size: 2rem;
   font-weight: bold;
-  color: #6D8142;
+  color: #2d2d2d;
   margin-bottom: 0.5rem;
 `;
 

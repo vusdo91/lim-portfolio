@@ -5,7 +5,7 @@ import { useProfile } from '../../contexts/ProfileContext';
 
 const Container = styled.div`
   min-height: 100vh;
-  background: #f8f9fa;
+  background: #f5f5f5;
   overflow-y: auto;
   height: 100vh;
 `;
@@ -39,11 +39,11 @@ const Button = styled.button`
   transition: background 0.2s ease;
   
   &.primary {
-    background: #6D8142;
+    background: #2d2d2d;
     color: white;
     
     &:hover {
-      background: #2a3a0b;
+      background: #1a1a1a;
     }
   }
   
@@ -89,7 +89,7 @@ const SectionContent = styled.div`
 `;
 
 const BiographyText = styled.div`
-  background: #f8f9fa;
+  background: #f5f5f5;
   padding: 1.5rem;
   border-radius: 4px;
   border: 1px solid #ddd;
@@ -111,13 +111,13 @@ const ExhibitionTable = styled.table`
   }
   
   th {
-    background: #f8f9fa;
+    background: #f5f5f5;
     font-weight: 600;
     color: #333;
   }
   
   tr:hover {
-    background: #f8f9fa;
+    background: #f5f5f5;
   }
 `;
 
@@ -128,13 +128,13 @@ const TypeBadge = styled.span`
   font-weight: 500;
   
   &.solo {
-    background: #d4edda;
-    color: #155724;
+    background: #ebebeb;
+    color: #2d2d2d;
   }
   
   &.group {
-    background: #d1ecf1;
-    color: #0c5460;
+    background: #ebebeb;
+    color: #2d2d2d;
   }
 `;
 
@@ -151,20 +151,20 @@ const SmallButton = styled.button`
   font-size: 0.8rem;
   
   &.edit {
-    background: #007bff;
+    background: #525252;
     color: white;
     
     &:hover {
-      background: #0056b3;
+      background: #2d2d2d;
     }
   }
   
   &.delete {
-    background: #dc3545;
+    background: #2d2d2d;
     color: white;
     
     &:hover {
-      background: #c82333;
+      background: #1a1a1a;
     }
   }
 `;
@@ -190,13 +190,13 @@ const LanguageToggle = styled.div`
     transition: all 0.2s ease;
     
     &.active {
-      background: #6D8142;
+      background: #2d2d2d;
       color: white;
-      border-color: #6D8142;
+      border-color: #2d2d2d;
     }
     
     &:hover:not(.active) {
-      background: #f8f9fa;
+      background: #f5f5f5;
     }
   }
   

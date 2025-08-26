@@ -40,9 +40,9 @@ const GlobalStyle = createGlobalStyle`
     -moz-osx-font-smoothing: grayscale;
   }
   
-  .coolvetica {
-    font-family: 'Coolvetica', 'Arial Black', 'Helvetica Neue', Arial, sans-serif !important;
-    font-weight: 400;
+  .creato-light {
+    font-family: 'CreatoDisplay Light', 'Helvetica Neue', Arial, sans-serif !important;
+    font-weight: 300;
   }
   
   .noto-sans {

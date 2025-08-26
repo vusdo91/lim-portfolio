@@ -4,13 +4,10 @@
 
 ## 필요한 폰트 파일들
 
-### Coolvetica Font
-- coolvetica.woff2
-- coolvetica.woff  
-- coolvetica.ttf
-- coolvetica-bold.woff2
-- coolvetica-bold.woff
-- coolvetica-bold.ttf
+### CreatoDisplay Light Font
+- CreatoDisplay-Light.woff2
+- CreatoDisplay-Light.woff  
+- CreatoDisplay-Light.otf
 
 ### NanumSquare Font
 - NanumSquare-Light.woff2
@@ -31,9 +28,9 @@
 CSS에서 다음과 같이 사용할 수 있습니다:
 
 ```css
-/* Coolvetica 폰트 사용 */
+/* CreatoDisplay Light 폰트 사용 */
 .title {
-  font-family: 'Coolvetica', sans-serif;
+  font-family: 'CreatoDisplay Light', sans-serif;
 }
 
 /* NanumSquare 폰트 사용 */
@@ -46,7 +43,7 @@ CSS에서 다음과 같이 사용할 수 있습니다:
 또는 미리 정의된 클래스를 사용:
 
 ```html
-<div class="coolvetica">Coolvetica 폰트</div>
+<div class="creato-light">CreatoDisplay Light 폰트</div>
 <div class="nanum-regular">나눔스퀘어 레귤러</div>
 <div class="nanum-bold">나눔스퀘어 볼드</div>
 ```

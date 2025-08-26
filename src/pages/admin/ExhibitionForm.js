@@ -5,7 +5,7 @@ import { useProfile } from '../../contexts/ProfileContext';
 
 const Container = styled.div`
   min-height: 100vh;
-  background: #f8f9fa;
+  background: #f5f5f5;
   overflow-y: auto;
   height: 100vh;
 `;
@@ -72,12 +72,12 @@ const Select = styled.select`
   
   &:focus {
     outline: none;
-    border-color: #6D8142;
-    box-shadow: 0 0 0 2px rgba(50, 67, 13, 0.1);
+    border-color: #2d2d2d;
+    box-shadow: 0 0 0 2px rgba(45, 45, 45, 0.1);
   }
   
   &.error {
-    border-color: #dc3545;
+    border-color: #2d2d2d;
   }
 `;
 
@@ -90,17 +90,17 @@ const Input = styled.input`
   
   &:focus {
     outline: none;
-    border-color: #6D8142;
-    box-shadow: 0 0 0 2px rgba(50, 67, 13, 0.1);
+    border-color: #2d2d2d;
+    box-shadow: 0 0 0 2px rgba(45, 45, 45, 0.1);
   }
   
   &.error {
-    border-color: #dc3545;
+    border-color: #2d2d2d;
   }
 `;
 
 const ErrorMessage = styled.div`
-  color: #dc3545;
+  color: #2d2d2d;
   font-size: 0.875rem;
   margin-top: 0.25rem;
 `;
@@ -119,11 +119,11 @@ const Button = styled.button`
   font-size: 1rem;
   
   &.primary {
-    background: #6D8142;
+    background: #2d2d2d;
     color: white;
     
     &:hover:not(:disabled) {
-      background: #2a3a0b;
+      background: #1a1a1a;
     }
     
     &:disabled {

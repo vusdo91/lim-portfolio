@@ -36,7 +36,7 @@ const Logo = styled(Link)`
   }
   
   .name {
-    color: #6D8142;
+    color: #2d2d2d;
   }
 `;
 
@@ -68,14 +68,14 @@ const NavLink = styled(Link)`
       transform: translateX(-50%);
       width: 80%;
       height: 4px;
-      background: #6D8142;
+      background: #2d2d2d;
       border-radius: 2px;
     }
   `}
   
   /* Hover 상태 - 초록 배경 */
   &:hover {
-    background: #6D8142;
+    background: #2d2d2d;
     color: white;
     
     /* hover 시에는 밑줄 제거 */
@@ -120,9 +120,9 @@ const LanguageButton = styled.button`
   }
   
   &:hover {
-    background: #6D8142;
+    background: #2d2d2d;
     color: white;
-    border-color: #6D8142;
+    border-color: #2d2d2d;
     
     &::before {
       filter: invert(1);
@@ -163,7 +163,7 @@ const DropdownItem = styled.button`
   }
   
   &.active {
-    background: #6D8142;
+    background: #2d2d2d;
     color: white;
   }
 `;
@@ -244,18 +244,18 @@ const MobileNavLink = styled(Link)`
   text-decoration: none;
   padding: 1rem 0;
   transition: color 0.2s ease;
-  font-family: 'Coolvetica', 'Arial Black', 'Helvetica Neue', Arial, sans-serif;
+  font-family: 'CreatoDisplay Light', 'Helvetica Neue', Arial, sans-serif;
   display: flex;
   justify-content: space-between;
   align-items: center;
   position: relative;
   
   &:hover {
-    color: #6D8142;
+    color: #2d2d2d;
   }
   
   ${props => props.$isActive && `
-    color: #6D8142;
+    color: #2d2d2d;
     
     &::after {
       content: '';
@@ -278,7 +278,7 @@ const MobileLanguageSection = styled.div`
 const MobileLanguageTitle = styled.div`
   font-size: 1rem;
   color: #666;
-  font-family: 'Coolvetica', 'Arial Black', 'Helvetica Neue', Arial, sans-serif;
+  font-family: 'CreatoDisplay Light', 'Helvetica Neue', Arial, sans-serif;
   flex-shrink: 0;
 `;
 
@@ -302,9 +302,9 @@ const MobileLanguageButton = styled.button`
   }
   
   ${props => props.active && `
-    background: #6D8142;
+    background: #2d2d2d;
     color: white;
-    border-color: #6D8142;
+    border-color: #2d2d2d;
   `}
 `;
 
@@ -357,11 +357,11 @@ const Header = () => {
   return (
     <>
       <HeaderContainer>
-        <Logo to="/" className="coolvetica">
+        <Logo to="/" className="creato-light">
           <span className="studio">Studio</span> <span className="name">LimYunmook</span>
         </Logo>
         
-        <Navigation className="coolvetica">
+        <Navigation className="creato-light">
           <NavLink to="/about" $isActive={location.pathname === '/about'}>
             {t('navigation.about', language)}
           </NavLink>

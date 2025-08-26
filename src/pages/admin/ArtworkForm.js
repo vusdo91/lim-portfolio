@@ -5,7 +5,7 @@ import { useArtworks } from '../../contexts/ArtworkContext';
 
 const Container = styled.div`
   min-height: 100vh;
-  background: #f8f9fa;
+  background: #f5f5f5;
   overflow-y: auto;
   height: 100vh;
 `;
@@ -71,12 +71,12 @@ const Input = styled.input`
   
   &:focus {
     outline: none;
-    border-color: #6D8142;
-    box-shadow: 0 0 0 2px rgba(50, 67, 13, 0.1);
+    border-color: #2d2d2d;
+    box-shadow: 0 0 0 2px rgba(45, 45, 45, 0.1);
   }
   
   &.error {
-    border-color: #dc3545;
+    border-color: #2d2d2d;
   }
 `;
 
@@ -91,12 +91,12 @@ const TextArea = styled.textarea`
   
   &:focus {
     outline: none;
-    border-color: #6D8142;
-    box-shadow: 0 0 0 2px rgba(50, 67, 13, 0.1);
+    border-color: #2d2d2d;
+    box-shadow: 0 0 0 2px rgba(45, 45, 45, 0.1);
   }
   
   &.error {
-    border-color: #dc3545;
+    border-color: #2d2d2d;
   }
 `;
 
@@ -113,11 +113,11 @@ const FileInput = styled.input`
   
   &:focus {
     outline: none;
-    border-color: #6D8142;
+    border-color: #2d2d2d;
   }
   
   &.error {
-    border-color: #dc3545;
+    border-color: #2d2d2d;
   }
 `;
 
@@ -134,7 +134,7 @@ const ImagePreview = styled.div`
 `;
 
 const ErrorMessage = styled.div`
-  color: #dc3545;
+  color: #2d2d2d;
   font-size: 0.875rem;
   margin-top: 0.25rem;
 `;
@@ -153,11 +153,11 @@ const Button = styled.button`
   font-size: 1rem;
   
   &.primary {
-    background: #6D8142;
+    background: #2d2d2d;
     color: white;
     
     &:hover:not(:disabled) {
-      background: #2a3a0b;
+      background: #1a1a1a;
     }
     
     &:disabled {
@@ -311,12 +311,22 @@ const ArtworkForm = () => {
       };
 
       if (isEdit) {
-        updateArtwork(parseInt(id), artworkData);
+        const result = await updateArtwork(id, artworkData);
+        if (result.success) {
+          alert('작품이 수정되었습니다.');
+          navigate('/admin/artwork');
+        } else {
+          alert('작품 수정에 실패했습니다: ' + result.error);
+        }
       } else {
-        addArtwork(artworkData);
+        const result = await addArtwork(artworkData);
+        if (result.success) {
+          alert('작품이 추가되었습니다.');
+          navigate('/admin/artwork');
+        } else {
+          alert('작품 추가에 실패했습니다: ' + result.error);
+        }
       }
-
-      navigate('/admin/artwork');
     } catch (error) {
       console.error('작품 저장 중 오류:', error);
     } finally {

@@ -57,23 +57,6 @@ const ImageContainer = styled.div`
     height: 100%;
   }
   
-  &:nth-child(1) {
-    @media (max-width: 768px) {
-      order: 1;
-    }
-  }
-  
-  &:nth-child(2) {
-    @media (max-width: 768px) {
-      order: 3;
-    }
-  }
-  
-  &:nth-child(4) {
-    @media (max-width: 768px) {
-      order: 4;
-    }
-  }
 `;
 
 const ImageComponent = styled.img`
@@ -100,40 +83,7 @@ const WhiteOverlay = styled.div`
   z-index: 2;
 `;
 
-const TextContainer = styled.div`
-  width: 360px;
-  height: 480px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: white;
-  
-  @media (max-width: 768px) {
-    width: 100%;
-    height: 100%;
-    order: 2;
-  }
-`;
 
-const TitleSection = styled.div`
-  text-align: left;
-  
-  h1 {
-    font-size: 4rem;
-    margin: 0;
-    line-height: 1;
-    color: #000;
-    
-    .name {
-      line-height: 1;
-      color: #6D8142;
-    }
-    
-    @media (max-width: 768px) {
-      font-size: 3rem;
-    }
-  }
-`;
 
 const Home = () => {
   const { artworks } = useArtworks();
@@ -145,18 +95,18 @@ const Home = () => {
   const getRandomArtworks = () => {
     if (!artworks || artworks.length === 0) return [];
     
-    // 작품이 3개 미만인 경우 처리
-    if (artworks.length <= 3) {
+    // 작품이 4개 미만인 경우 처리
+    if (artworks.length <= 4) {
       return [...artworks];
     }
     
-    // 작품 배열을 섞어서 중복 없는 3개 선택
+    // 작품 배열을 섞어서 중복 없는 4개 선택
     const shuffled = [...artworks].sort(() => 0.5 - Math.random());
-    const selected = shuffled.slice(0, 3);
+    const selected = shuffled.slice(0, 4);
     
     // 중복 검사 (혹시 모를 상황에 대비)
     const uniqueIds = new Set(selected.map(artwork => artwork.id));
-    if (uniqueIds.size !== 3 && artworks.length >= 3) {
+    if (uniqueIds.size !== 4 && artworks.length >= 4) {
       // 중복이 발생한 경우 재귀적으로 다시 선택
       return getRandomArtworks();
     }
@@ -239,21 +189,19 @@ const Home = () => {
           <WhiteOverlay show={isWhiteFlash} />
         </ImageContainer>
         
-        <TextContainer>
-          <TitleSection>
-            <h1 className="coolvetica">
-              Lim<br />
-              yun<br />
-              <span className="name">mook's</span><br />
-              Studio
-            </h1>
-          </TitleSection>
-        </TextContainer>
-        
         <ImageContainer>
           <ImageComponent 
             src={currentImages[2]?.image} 
             alt={currentImages[2]?.title}
+            isVisible={showCurrent}
+          />
+          <WhiteOverlay show={isWhiteFlash} />
+        </ImageContainer>
+        
+        <ImageContainer>
+          <ImageComponent 
+            src={currentImages[3]?.image} 
+            alt={currentImages[3]?.title}
             isVisible={showCurrent}
           />
           <WhiteOverlay show={isWhiteFlash} />

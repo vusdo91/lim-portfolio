@@ -8,7 +8,7 @@ const LoginContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f8f9fa;
+  background: #f5f5f5;
 `;
 
 const LoginForm = styled.form`
@@ -47,15 +47,15 @@ const Input = styled.input`
   
   &:focus {
     outline: none;
-    border-color: #6D8142;
-    box-shadow: 0 0 0 2px rgba(50, 67, 13, 0.1);
+    border-color: #2d2d2d;
+    box-shadow: 0 0 0 2px rgba(45, 45, 45, 0.1);
   }
 `;
 
 const LoginButton = styled.button`
   width: 100%;
   padding: 0.75rem;
-  background: #6D8142;
+  background: #2d2d2d;
   color: white;
   border: none;
   border-radius: 4px;
@@ -64,21 +64,21 @@ const LoginButton = styled.button`
   transition: background 0.2s ease;
   
   &:hover {
-    background: #2a3a0b;
+    background: #1a1a1a;
   }
   
   &:disabled {
-    background: #ccc;
+    background: #a0a0a0;
     cursor: not-allowed;
   }
 `;
 
 const ErrorMessage = styled.div`
-  color: #dc3545;
+  color: #2d2d2d;
   margin-bottom: 1rem;
   padding: 0.5rem;
-  background: #f8d7da;
-  border: 1px solid #f5c6cb;
+  background: #ebebeb;
+  border: 1px solid #d0d0d0;
   border-radius: 4px;
   font-size: 0.9rem;
 `;
@@ -92,7 +92,7 @@ const BackToSite = styled.a`
   font-size: 0.9rem;
   
   &:hover {
-    color: #6D8142;
+    color: #2d2d2d;
   }
 `;
 

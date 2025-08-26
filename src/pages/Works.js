@@ -4,7 +4,7 @@ import { useArtworks } from '../contexts/ArtworkContext';
 
 const WorksContainer = styled.div`
   min-height: calc(100vh - 112px);
-  background: #f8f8f8;
+  background: #f5f5f5;
   padding: 0;
   
   @media (max-width: 768px) {
@@ -40,7 +40,7 @@ const ImageSection = styled.div`
 const ImageContainer = styled.div`
   width: 640px;
   height: 640px;
-  background: #f8f8f8;
+  background: #f5f5f5;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -86,7 +86,7 @@ const WorkInfo = styled.div`
   h1 {
     font-size: 1.5rem;
     font-weight: 600;
-    color: #1E1E1E;
+    color: #1a1a1a;
     margin: 0 0 1.5rem 0;
     
     @media (max-width: 768px) {
@@ -129,7 +129,7 @@ const ArrowButton = styled.button`
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  background: rgba(50, 67, 13, 0.8);
+  background: rgba(45, 45, 45, 0.8);
   border: none;
   color: white;
   font-size: 1.2rem;
@@ -144,12 +144,12 @@ const ArrowButton = styled.button`
   }
   
   &:hover:not(:disabled) {
-    background: rgba(50, 67, 13, 1);
+    background: rgba(45, 45, 45, 1);
     transform: scale(1.1);
   }
   
   &:disabled {
-    background: rgba(50, 67, 13, 0.3);
+    background: rgba(45, 45, 45, 0.3);
     cursor: not-allowed;
     opacity: 0.5;
   }

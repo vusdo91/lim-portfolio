@@ -32,7 +32,7 @@ const NavLogo = styled(Link)`
   transition: color 0.3s;
 
   &:hover {
-    color: #007bff;
+    color: #525252;
   }
 `;
 
@@ -59,12 +59,12 @@ const NavLink = styled(Link)`
   padding: 0.5rem 1rem;
   border-radius: 5px;
   transition: all 0.3s;
-  background-color: ${props => props.$active ? '#007bff' : 'transparent'};
+  background-color: ${props => props.$active ? '#2d2d2d' : 'transparent'};
   color: ${props => props.$active ? 'white' : '#333'};
 
   &:hover {
-    background-color: ${props => props.$active ? '#007bff' : '#f8f9fa'};
-    color: ${props => props.$active ? 'white' : '#007bff'};
+    background-color: ${props => props.$active ? '#2d2d2d' : '#f5f5f5'};
+    color: ${props => props.$active ? 'white' : '#525252'};
   }
 
   @media (max-width: 768px) {

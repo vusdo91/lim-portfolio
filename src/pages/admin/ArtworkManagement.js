@@ -5,7 +5,7 @@ import { useArtworks } from '../../contexts/ArtworkContext';
 
 const Container = styled.div`
   min-height: 100vh;
-  background: #f8f9fa;
+  background: #f5f5f5;
   overflow-y: auto;
   height: 100vh;
 `;
@@ -39,11 +39,11 @@ const Button = styled.button`
   transition: background 0.2s ease;
   
   &.primary {
-    background: #6D8142;
+    background: #2d2d2d;
     color: white;
     
     &:hover {
-      background: #2a3a0b;
+      background: #1a1a1a;
     }
   }
   
@@ -57,11 +57,11 @@ const Button = styled.button`
   }
   
   &.danger {
-    background: #dc3545;
+    background: #2d2d2d;
     color: white;
     
     &:hover {
-      background: #c82333;
+      background: #1a1a1a;
     }
   }
 `;
@@ -127,20 +127,20 @@ const SmallButton = styled.button`
   font-size: 0.8rem;
   
   &.edit {
-    background: #007bff;
+    background: #525252;
     color: white;
     
     &:hover {
-      background: #0056b3;
+      background: #2d2d2d;
     }
   }
   
   &.delete {
-    background: #dc3545;
+    background: #2d2d2d;
     color: white;
     
     &:hover {
-      background: #c82333;
+      background: #1a1a1a;
     }
   }
 `;
@@ -181,9 +181,13 @@ const ArtworkManagement = () => {
     if (window.confirm('정말 이 작품을 삭제하시겠습니까?')) {
       setDeletingId(id);
       try {
-        deleteArtwork(id);
+        const result = await deleteArtwork(id);
+        if (!result.success) {
+          alert('작품 삭제에 실패했습니다: ' + result.error);
+        }
       } catch (error) {
         console.error('작품 삭제 중 오류:', error);
+        alert('작품 삭제 중 오류가 발생했습니다.');
       } finally {
         setDeletingId(null);
       }
