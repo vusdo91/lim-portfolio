@@ -7,6 +7,8 @@ import { useProfile } from '../../contexts/ProfileContext';
 const DashboardContainer = styled.div`
   min-height: 100vh;
   background: #f8f9fa;
+  overflow-y: auto;
+  height: 100vh;
 `;
 
 const Header = styled.header`
