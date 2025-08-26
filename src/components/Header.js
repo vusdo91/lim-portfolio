@@ -13,9 +13,11 @@ const HeaderContainer = styled.header`
   align-items: center;
   justify-content: space-between;
   padding: 0 2rem;
-  position: sticky;
+  position: fixed;
   top: 0;
-  z-index: 100;
+  left: 0;
+  right: 0;
+  z-index: 1000;
   
   @media (max-width: 768px) {
     height: 70px;

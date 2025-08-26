@@ -27,6 +27,11 @@ const GlobalStyle = createGlobalStyle`
     box-sizing: border-box;
   }
 
+  html, body {
+    height: 100%;
+    overflow: hidden;
+  }
+
   body {
     font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
       'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
@@ -66,18 +71,33 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 const AppContainer = styled.div`
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 `;
 
 const MainContent = styled.main`
   flex: 1;
-  min-height: calc(100vh - 112px);
+  height: calc(100vh - 56px);
+  margin-top: 56px;
+  overflow-y: auto;
+  overflow-x: hidden;
   
   @media (max-width: 768px) {
-    min-height: calc(100vh - 130px);
+    height: calc(100vh - 70px);
+    margin-top: 70px;
   }
+`;
+
+const ContentWrapper = styled.div`
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+`;
+
+const PageContent = styled.div`
+  flex: 1;
 `;
 
 function App() {
@@ -94,36 +114,52 @@ function App() {
               <AppContainer>
                 <Header />
                 <MainContent>
-                  <Home />
+                  <ContentWrapper>
+                    <PageContent>
+                      <Home />
+                    </PageContent>
+                    <Footer />
+                  </ContentWrapper>
                 </MainContent>
-                <Footer />
               </AppContainer>
             } />
             <Route path="/about" element={
               <AppContainer>
                 <Header />
                 <MainContent>
-                  <About />
+                  <ContentWrapper>
+                    <PageContent>
+                      <About />
+                    </PageContent>
+                    <Footer />
+                  </ContentWrapper>
                 </MainContent>
-                <Footer />
               </AppContainer>
             } />
             <Route path="/works" element={
               <AppContainer>
                 <Header />
                 <MainContent>
-                  <Works />
+                  <ContentWrapper>
+                    <PageContent>
+                      <Works />
+                    </PageContent>
+                    <Footer />
+                  </ContentWrapper>
                 </MainContent>
-                <Footer />
               </AppContainer>
             } />
             <Route path="/contact" element={
               <AppContainer>
                 <Header />
                 <MainContent>
-                  <Contact />
+                  <ContentWrapper>
+                    <PageContent>
+                      <Contact />
+                    </PageContent>
+                    <Footer />
+                  </ContentWrapper>
                 </MainContent>
-                <Footer />
               </AppContainer>
             } />
             
