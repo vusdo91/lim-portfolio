@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { useArtworks } from '../../contexts/ArtworkContext';
+import { uploadImage, deleteImage, extractImagePath } from '../../utils/imageUpload';
 
 const Container = styled.div`
   min-height: 100vh;
@@ -188,17 +189,19 @@ const ArtworkForm = () => {
     material: '',
     year: '',
     description: '',
-    image: ''
+    image: '',
+    imagePath: ''
   });
 
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState('');
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isImageUploading, setIsImageUploading] = useState(false);
 
   useEffect(() => {
     if (isEdit && id) {
-      const artwork = getArtworkById(parseInt(id));
+      const artwork = getArtworkById(id);
       if (artwork) {
         setFormData({
           title: artwork.title || '',
@@ -206,7 +209,8 @@ const ArtworkForm = () => {
           material: artwork.material || '',
           year: artwork.year || '',
           description: artwork.description || '',
-          image: artwork.image || ''
+          image: artwork.image || '',
+          imagePath: artwork.imagePath || ''
         });
         setImagePreview(artwork.image || '');
       }
@@ -229,28 +233,34 @@ const ArtworkForm = () => {
     }
   };
 
-  const handleImageChange = (e) => {
+  const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
-      // 파일 크기 확인 (3MB = 3 * 1024 * 1024 bytes)
-      if (file.size > 3 * 1024 * 1024) {
+      // 파일 크기 확인 (5MB = 5 * 1024 * 1024 bytes)
+      if (file.size > 5 * 1024 * 1024) {
         setErrors(prev => ({
           ...prev,
-          image: '이미지 파일 크기는 3MB 이하여야 합니다.'
+          image: '이미지 파일 크기는 5MB 이하여야 합니다.'
+        }));
+        return;
+      }
+
+      // 파일 형식 확인
+      if (!file.type.startsWith('image/')) {
+        setErrors(prev => ({
+          ...prev,
+          image: '이미지 파일만 업로드 가능합니다.'
         }));
         return;
       }
 
       setImageFile(file);
+      setIsImageUploading(true);
       
       // 이미지 미리보기
       const reader = new FileReader();
       reader.onload = (e) => {
         setImagePreview(e.target.result);
-        setFormData(prev => ({
-          ...prev,
-          image: e.target.result
-        }));
       };
       reader.readAsDataURL(file);
       
@@ -260,6 +270,32 @@ const ArtworkForm = () => {
           ...prev,
           image: ''
         }));
+      }
+
+      // Firebase Storage에 이미지 업로드
+      try {
+        const uploadResult = await uploadImage(file, 'artworks');
+        if (uploadResult.success) {
+          setFormData(prev => ({
+            ...prev,
+            image: uploadResult.url,
+            imagePath: uploadResult.path
+          }));
+          console.log('이미지 업로드 성공:', uploadResult.url);
+        } else {
+          setErrors(prev => ({
+            ...prev,
+            image: '이미지 업로드에 실패했습니다: ' + uploadResult.error
+          }));
+        }
+      } catch (error) {
+        console.error('이미지 업로드 오류:', error);
+        setErrors(prev => ({
+          ...prev,
+          image: '이미지 업로드 중 오류가 발생했습니다.'
+        }));
+      } finally {
+        setIsImageUploading(false);
       }
     }
   };
@@ -283,7 +319,7 @@ const ArtworkForm = () => {
       newErrors.year = '제작 연도를 입력해주세요.';
     }
 
-    if (!isEdit && !formData.image) {
+    if (!formData.image && !isImageUploading) {
       newErrors.image = '작품 이미지를 선택해주세요.';
     }
 
@@ -294,7 +330,7 @@ const ArtworkForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!validateForm()) {
+    if (!validateForm() || isImageUploading) {
       return;
     }
 
@@ -307,10 +343,19 @@ const ArtworkForm = () => {
         material: formData.material.trim(),
         year: formData.year.trim(),
         description: formData.description.trim(),
-        image: formData.image
+        image: formData.image,
+        imagePath: formData.imagePath
       };
 
       if (isEdit) {
+        // 수정 시 기존 이미지가 변경되었다면 기존 이미지 삭제
+        const existingArtwork = getArtworkById(id);
+        if (existingArtwork && existingArtwork.imagePath && 
+            existingArtwork.imagePath !== formData.imagePath && 
+            formData.imagePath) {
+          await deleteImage(existingArtwork.imagePath);
+        }
+        
         const result = await updateArtwork(id, artworkData);
         if (result.success) {
           alert('작품이 수정되었습니다.');
@@ -329,6 +374,7 @@ const ArtworkForm = () => {
       }
     } catch (error) {
       console.error('작품 저장 중 오류:', error);
+      alert('작품 저장 중 오류가 발생했습니다.');
     } finally {
       setIsSubmitting(false);
     }
@@ -350,18 +396,23 @@ const ArtworkForm = () => {
       <Content>
         <Form onSubmit={handleSubmit}>
           <FormGroup>
-            <Label htmlFor="image">작품 이미지 (3MB 이하)</Label>
+            <Label htmlFor="image">
+              작품 이미지 (5MB 이하)
+              {isImageUploading && ' - 업로드 중...'}
+            </Label>
             <FileInput
               id="image"
               type="file"
               accept="image/*"
               onChange={handleImageChange}
               className={errors.image ? 'error' : ''}
+              disabled={isImageUploading}
             />
             {errors.image && <ErrorMessage>{errors.image}</ErrorMessage>}
             {imagePreview && (
               <ImagePreview>
                 <img src={imagePreview} alt="미리보기" />
+                {isImageUploading && <div>업로드 중...</div>}
               </ImagePreview>
             )}
           </FormGroup>
@@ -437,9 +488,9 @@ const ArtworkForm = () => {
             <Button 
               type="submit" 
               className="primary"
-              disabled={isSubmitting}
+              disabled={isSubmitting || isImageUploading}
             >
-              {isSubmitting ? '저장 중...' : (isEdit ? '수정하기' : '추가하기')}
+              {isSubmitting ? '저장 중...' : isImageUploading ? '이미지 업로드 중...' : (isEdit ? '수정하기' : '추가하기')}
             </Button>
             <Button 
               type="button" 

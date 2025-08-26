@@ -11,6 +11,7 @@ import {
   writeBatch
 } from 'firebase/firestore';
 import { db } from '../firebase/config';
+import { deleteImage } from '../utils/imageUpload';
 
 const ArtworkContext = createContext();
 
@@ -111,7 +112,21 @@ export const ArtworkProvider = ({ children }) => {
   const deleteArtwork = async (id) => {
     try {
       setError(null);
+      
+      // 삭제할 작품 정보 가져오기
+      const artworkToDelete = getArtworkById(id);
+      
+      // Firestore에서 작품 삭제
       await deleteDoc(doc(db, 'artworks', id));
+      
+      // Firebase Storage에서 이미지 삭제
+      if (artworkToDelete && artworkToDelete.imagePath) {
+        const deleteResult = await deleteImage(artworkToDelete.imagePath);
+        if (!deleteResult.success) {
+          console.warn('이미지 삭제 실패:', deleteResult.error);
+        }
+      }
+      
       console.log('작품이 삭제되었습니다. ID:', id);
       return { success: true };
     } catch (error) {

@@ -1,6 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
+import { getStorage } from 'firebase/storage';
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -14,14 +15,16 @@ const firebaseConfig = {
 let app;
 let db;
 let auth;
+let storage;
 
 try {
   app = initializeApp(firebaseConfig);
   db = getFirestore(app);
   auth = getAuth(app);
+  storage = getStorage(app);
 } catch (error) {
   console.error("Firebase initialization error:", error);
 }
 
-export { db, auth };
+export { db, auth, storage };
 export default app;
