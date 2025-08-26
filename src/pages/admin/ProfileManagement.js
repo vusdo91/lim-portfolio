@@ -37,7 +37,7 @@ const Button = styled.button`
   transition: background 0.2s ease;
   
   &.primary {
-    background: #32430D;
+    background: #6D8142;
     color: white;
     
     &:hover {
@@ -188,9 +188,9 @@ const LanguageToggle = styled.div`
     transition: all 0.2s ease;
     
     &.active {
-      background: #32430D;
+      background: #6D8142;
       color: white;
-      border-color: #32430D;
+      border-color: #6D8142;
     }
     
     &:hover:not(.active) {

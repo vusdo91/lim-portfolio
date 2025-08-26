@@ -126,11 +126,11 @@ const TitleSection = styled.div`
     
     .name {
       line-height: 1;
-      color: #32430D;
+      color: #6D8142;
     }
     
     @media (max-width: 768px) {
-      font-size: 1.8rem;
+      font-size: 3rem;
     }
   }
 `;

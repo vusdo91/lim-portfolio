@@ -14,7 +14,7 @@ const AboutContainer = styled.div`
   
   @media (max-width: 768px) {
     min-height: calc(100vh - 130px);
-    padding: 2rem 2.5rem;
+    padding: 2rem 1.5rem;
   }
 `;
 
@@ -36,7 +36,7 @@ const TitleSection = styled.div`
     letter-spacing: 0.1rem;
     
     &.name-title {
-      color: #32430D;
+      color: #6D8142;
     }
     
     @media (max-width: 768px) {
@@ -60,6 +60,11 @@ const Biography = styled.div`
   color: #505050;
   margin-bottom: 6rem;
   text-align: justify;
+  
+  @media (max-width: 768px) {
+    font-size: 0.9rem;
+    margin-bottom: 4rem;
+  }
 `;
 
 const SectionTitle = styled.h2`
@@ -67,6 +72,11 @@ const SectionTitle = styled.h2`
   font-weight: 600;
   color: #1E1E1E;
   margin-bottom: 2.5rem;
+  
+  @media (max-width: 768px) {
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+  }
 `;
 
 const ExhibitionSection = styled.div`
@@ -106,6 +116,12 @@ const ExhibitionYear = styled.div`
   min-width: 4rem;
   margin-right: 2rem;
   flex-shrink: 0;
+  
+  @media (max-width: 768px) {
+    font-size: 0.85rem;
+    min-width: 3rem;
+    margin-right: 1.5rem;
+  }
 `;
 
 const ExhibitionListContainer = styled.div`
@@ -128,6 +144,11 @@ const ExhibitionContent = styled.div`
     
     &:last-child {
       margin-bottom: 0;
+    }
+    
+    @media (max-width: 768px) {
+      font-size: 0.85rem;
+      line-height: 1.4;
     }
   }
 `;
@@ -169,6 +190,19 @@ const ExhibitionItem = styled.div`
   
   &:last-child {
     margin-bottom: 0;
+  }
+  
+  @media (max-width: 768px) {
+    .year {
+      font-size: 0.85rem;
+      min-width: 3rem;
+      margin-right: 1.5rem;
+    }
+    
+    .content {
+      font-size: 0.85rem;
+      line-height: 1.4;
+    }
   }
 `;
 

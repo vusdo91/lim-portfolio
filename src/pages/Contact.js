@@ -33,11 +33,12 @@ const TitleSection = styled.div`
     letter-spacing: 0.1rem;
     
     &.name-title {
-      color: #32430D;
+      color: #6D8142;
     }
     
     @media (max-width: 768px) {
-      font-size: 2.2rem;
+      font-size: 3rem;
+      margin: 0 0 -0.5rem 0;
     }
   }
 `;

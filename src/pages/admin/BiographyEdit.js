@@ -73,7 +73,7 @@ const TextArea = styled.textarea`
   
   &:focus {
     outline: none;
-    border-color: #32430D;
+    border-color: #6D8142;
     box-shadow: 0 0 0 2px rgba(50, 67, 13, 0.1);
   }
 `;
@@ -99,7 +99,7 @@ const Button = styled.button`
   font-size: 1rem;
   
   &.primary {
-    background: #32430D;
+    background: #6D8142;
     color: white;
     
     &:hover:not(:disabled) {

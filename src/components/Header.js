@@ -36,7 +36,7 @@ const Logo = styled(Link)`
   }
   
   .name {
-    color: #32430D;
+    color: #6D8142;
   }
 `;
 
@@ -68,14 +68,14 @@ const NavLink = styled(Link)`
       transform: translateX(-50%);
       width: 80%;
       height: 4px;
-      background: #32430D;
+      background: #6D8142;
       border-radius: 2px;
     }
   `}
   
   /* Hover 상태 - 초록 배경 */
   &:hover {
-    background: #32430D;
+    background: #6D8142;
     color: white;
     
     /* hover 시에는 밑줄 제거 */
@@ -120,9 +120,9 @@ const LanguageButton = styled.button`
   }
   
   &:hover {
-    background: #32430D;
+    background: #6D8142;
     color: white;
-    border-color: #32430D;
+    border-color: #6D8142;
     
     &::before {
       filter: invert(1);
@@ -163,7 +163,7 @@ const DropdownItem = styled.button`
   }
   
   &.active {
-    background: #32430D;
+    background: #6D8142;
     color: white;
   }
 `;
@@ -251,11 +251,11 @@ const MobileNavLink = styled(Link)`
   position: relative;
   
   &:hover {
-    color: #32430D;
+    color: #6D8142;
   }
   
   ${props => props.$isActive && `
-    color: #32430D;
+    color: #6D8142;
     
     &::after {
       content: '';
@@ -302,9 +302,9 @@ const MobileLanguageButton = styled.button`
   }
   
   ${props => props.active && `
-    background: #32430D;
+    background: #6D8142;
     color: white;
-    border-color: #32430D;
+    border-color: #6D8142;
   `}
 `;
 

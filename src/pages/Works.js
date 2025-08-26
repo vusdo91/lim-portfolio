@@ -256,8 +256,8 @@ const ModalImage = styled.img`
 
 const CloseButton = styled.button`
   position: absolute;
-  top: 2rem;
-  right: 2rem;
+  top: 1rem;
+  right: 1rem;
   width: 50px;
   height: 50px;
   border: none;
@@ -276,8 +276,8 @@ const CloseButton = styled.button`
     width: 40px;
     height: 40px;
     font-size: 1.2rem;
-    top: 1rem;
-    right: 1rem;
+    top: 0.5rem;
+    right: 0.5rem;
   }
   
   &:hover {

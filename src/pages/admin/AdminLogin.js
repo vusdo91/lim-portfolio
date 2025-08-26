@@ -47,7 +47,7 @@ const Input = styled.input`
   
   &:focus {
     outline: none;
-    border-color: #32430D;
+    border-color: #6D8142;
     box-shadow: 0 0 0 2px rgba(50, 67, 13, 0.1);
   }
 `;
@@ -55,7 +55,7 @@ const Input = styled.input`
 const LoginButton = styled.button`
   width: 100%;
   padding: 0.75rem;
-  background: #32430D;
+  background: #6D8142;
   color: white;
   border: none;
   border-radius: 4px;
@@ -92,7 +92,7 @@ const BackToSite = styled.a`
   font-size: 0.9rem;
   
   &:hover {
-    color: #32430D;
+    color: #6D8142;
   }
 `;
 

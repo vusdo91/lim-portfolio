@@ -74,7 +74,7 @@ const MenuCard = styled.div`
 `;
 
 const MenuTitle = styled.h3`
-  color: #32430D;
+  color: #6D8142;
   margin: 0 0 0.5rem 0;
   font-size: 1.2rem;
 `;
@@ -103,7 +103,7 @@ const StatCard = styled.div`
 const StatNumber = styled.div`
   font-size: 2rem;
   font-weight: bold;
-  color: #32430D;
+  color: #6D8142;
   margin-bottom: 0.5rem;
 `;
 
