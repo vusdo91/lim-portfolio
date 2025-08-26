@@ -85,8 +85,9 @@ const MainContent = styled.main`
   overflow-x: hidden;
   
   @media (max-width: 768px) {
-    height: calc(100vh - 70px);
+    height: calc(100vh - 150px);
     margin-top: 70px;
+    padding: 0;
   }
 `;
 
@@ -94,6 +95,10 @@ const ContentWrapper = styled.div`
   min-height: 100%;
   display: flex;
   flex-direction: column;
+  
+  @media (max-width: 768px) {
+    padding: 0;
+  }
 `;
 
 const PageContent = styled.div`

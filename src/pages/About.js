@@ -14,7 +14,7 @@ const AboutContainer = styled.div`
   
   @media (max-width: 768px) {
     min-height: calc(100vh - 130px);
-    padding: 2rem 1.5rem;
+    padding: 2rem 2.5rem;
   }
 `;
 
@@ -40,7 +40,8 @@ const TitleSection = styled.div`
     }
     
     @media (max-width: 768px) {
-      font-size: 2.2rem;
+      font-size: 3rem;
+      margin: 0 0 -0.5rem 0;
     }
   }
 `;

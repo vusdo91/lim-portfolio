@@ -45,7 +45,7 @@ const Navigation = styled.nav`
   gap: 3rem;
   
   @media (max-width: 768px) {
-    gap: 1.5rem;
+    display: none;
   }
 `;
 
@@ -87,6 +87,10 @@ const NavLink = styled(Link)`
 
 const LanguageContainer = styled.div`
   position: relative;
+  
+  @media (max-width: 768px) {
+    display: none;
+  }
 `;
 
 const LanguageButton = styled.button`
@@ -164,11 +168,153 @@ const DropdownItem = styled.button`
   }
 `;
 
+const HamburgerButton = styled.button`
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 30px;
+  height: 30px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  
+  @media (max-width: 768px) {
+    display: flex;
+  }
+`;
+
+const HamburgerLine = styled.span`
+  width: 20px;
+  height: 2px;
+  background: #333;
+  margin: 2px 0;
+  transition: all 0.3s ease;
+  
+  ${props => props.isOpen && props.first && `
+    transform: rotate(45deg) translate(4px, 4px);
+  `}
+  
+  ${props => props.isOpen && props.second && `
+    opacity: 0;
+  `}
+  
+  ${props => props.isOpen && props.third && `
+    transform: rotate(-45deg) translate(4px, -4px);
+  `}
+`;
+
+const MobileMenu = styled.div`
+  display: none;
+  position: fixed;
+  top: 70px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: white;
+  z-index: 999;
+  opacity: ${props => props.show ? 1 : 0};
+  visibility: ${props => props.show ? 'visible' : 'hidden'};
+  transform: translateY(${props => props.show ? '0' : '-10px'});
+  transition: all 0.3s ease;
+  
+  @media (max-width: 768px) {
+    display: block;
+  }
+`;
+
+const MobileMenuContent = styled.div`
+  height: 100%;
+  padding: 1rem 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+`;
+
+const MobileNavSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding-top: 2rem;
+`;
+
+const MobileNavLink = styled(Link)`
+  font-size: 1.5rem;
+  color: #333;
+  text-decoration: none;
+  padding: 1rem 0;
+  transition: color 0.2s ease;
+  font-family: 'Coolvetica', 'Arial Black', 'Helvetica Neue', Arial, sans-serif;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  
+  &:hover {
+    color: #32430D;
+  }
+  
+  ${props => props.$isActive && `
+    color: #32430D;
+    
+    &::after {
+      content: '';
+      width: 20px;
+      height: 20px;
+      background: url('/assets/svg/checkIcon.svg') center/cover;
+      display: inline-block;
+    }
+  `}
+`;
+
+const MobileLanguageSection = styled.div`
+  padding: 2rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 2rem;
+`;
+
+const MobileLanguageTitle = styled.div`
+  font-size: 1rem;
+  color: #666;
+  font-family: 'Coolvetica', 'Arial Black', 'Helvetica Neue', Arial, sans-serif;
+  flex-shrink: 0;
+`;
+
+const MobileLanguageOptions = styled.div`
+  display: flex;
+  gap: 1rem;
+`;
+
+const MobileLanguageButton = styled.button`
+  background: none;
+  border: 1px solid #eee;
+  border-radius: 20px;
+  padding: 0.5rem 1rem;
+  font-size: 0.8rem;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: #f8f8f8;
+  }
+  
+  ${props => props.active && `
+    background: #32430D;
+    color: white;
+    border-color: #32430D;
+  `}
+`;
+
 const Header = () => {
   const location = useLocation();
   const { language, switchLanguage } = useLanguage();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const mobileMenuRef = useRef(null);
   
   const languages = [
     { code: 'ko', name: '한국어' },
@@ -181,6 +327,10 @@ const Header = () => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsDropdownOpen(false);
+      }
+      if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target) && 
+          !event.target.closest('button')) {
+        setIsMobileMenuOpen(false);
       }
     };
     
@@ -195,41 +345,101 @@ const Header = () => {
     setIsDropdownOpen(false);
   };
   
+  const handleMobileLanguageSelect = (selectedLang) => {
+    switchLanguage(selectedLang.code);
+    setIsMobileMenuOpen(false);
+  };
+  
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+  
   return (
-    <HeaderContainer>
-      <Logo to="/" className="coolvetica">
-        <span className="studio">Studio</span> <span className="name">LimYunmook</span>
-      </Logo>
+    <>
+      <HeaderContainer>
+        <Logo to="/" className="coolvetica">
+          <span className="studio">Studio</span> <span className="name">LimYunmook</span>
+        </Logo>
+        
+        <Navigation className="coolvetica">
+          <NavLink to="/about" $isActive={location.pathname === '/about'}>
+            {t('navigation.about', language)}
+          </NavLink>
+          <NavLink to="/works" $isActive={location.pathname === '/works'}>
+            {t('navigation.works', language)}
+          </NavLink>
+          <NavLink to="/contact" $isActive={location.pathname === '/contact'}>
+            {t('navigation.contact', language)}
+          </NavLink>
+        </Navigation>
+        
+        <LanguageContainer ref={dropdownRef}>
+          <LanguageButton onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
+            {currentLanguageName}
+          </LanguageButton>
+          <DropdownMenu show={isDropdownOpen}>
+            {languages.map((lang) => (
+              <DropdownItem
+                key={lang.code}
+                className={language === lang.code ? 'active' : ''}
+                onClick={() => handleLanguageSelect(lang)}
+              >
+                {lang.name}
+              </DropdownItem>
+            ))}
+          </DropdownMenu>
+        </LanguageContainer>
+        
+        <HamburgerButton onClick={toggleMobileMenu}>
+          <HamburgerLine isOpen={isMobileMenuOpen} first />
+          <HamburgerLine isOpen={isMobileMenuOpen} second />
+          <HamburgerLine isOpen={isMobileMenuOpen} third />
+        </HamburgerButton>
+      </HeaderContainer>
       
-      <Navigation className="coolvetica">
-        <NavLink to="/about" $isActive={location.pathname === '/about'}>
-          {t('navigation.about', language)}
-        </NavLink>
-        <NavLink to="/works" $isActive={location.pathname === '/works'}>
-          {t('navigation.works', language)}
-        </NavLink>
-        <NavLink to="/contact" $isActive={location.pathname === '/contact'}>
-          {t('navigation.contact', language)}
-        </NavLink>
-      </Navigation>
-      
-      <LanguageContainer ref={dropdownRef}>
-        <LanguageButton onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
-          {currentLanguageName}
-        </LanguageButton>
-        <DropdownMenu show={isDropdownOpen}>
-          {languages.map((lang) => (
-            <DropdownItem
-              key={lang.code}
-              className={language === lang.code ? 'active' : ''}
-              onClick={() => handleLanguageSelect(lang)}
+      <MobileMenu show={isMobileMenuOpen} ref={mobileMenuRef}>
+        <MobileMenuContent>
+          <MobileNavSection>
+            <MobileNavLink 
+              to="/about" 
+              $isActive={location.pathname === '/about'}
+              onClick={() => setIsMobileMenuOpen(false)}
             >
-              {lang.name}
-            </DropdownItem>
-          ))}
-        </DropdownMenu>
-      </LanguageContainer>
-    </HeaderContainer>
+              {t('navigation.about', language)}
+            </MobileNavLink>
+            <MobileNavLink 
+              to="/works" 
+              $isActive={location.pathname === '/works'}
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              {t('navigation.works', language)}
+            </MobileNavLink>
+            <MobileNavLink 
+              to="/contact" 
+              $isActive={location.pathname === '/contact'}
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              {t('navigation.contact', language)}
+            </MobileNavLink>
+          </MobileNavSection>
+          
+          <MobileLanguageSection>
+            <MobileLanguageTitle>Language</MobileLanguageTitle>
+            <MobileLanguageOptions>
+              {languages.map((lang) => (
+                <MobileLanguageButton
+                  key={lang.code}
+                  active={language === lang.code}
+                  onClick={() => handleMobileLanguageSelect(lang)}
+                >
+                  {lang.name}
+                </MobileLanguageButton>
+              ))}
+            </MobileLanguageOptions>
+          </MobileLanguageSection>
+        </MobileMenuContent>
+      </MobileMenu>
+    </>
   );
 };
 

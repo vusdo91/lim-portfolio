@@ -13,11 +13,14 @@ const FooterContainer = styled.footer`
   
   @media (max-width: 768px) {
     flex-direction: column;
-    gap: 1rem;
-    padding: 1.5rem 2rem;
-    text-align: center;
-    min-height: 60px;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 0.3rem;
+    padding: 1rem 1rem;
+    text-align: left;
     height: auto;
+    min-height: 80px;
+    font-size: 0.7rem;
   }
 `;
 
@@ -28,7 +31,10 @@ const ContactInfo = styled.div`
   
   @media (max-width: 768px) {
     flex-direction: column;
-    gap: 0.5rem;
+    align-items: flex-start;
+    gap: 0.2rem;
+    font-size: 0.6rem;
+    margin-bottom: 0.4rem;
   }
 `;
 
@@ -75,7 +81,9 @@ const Copyright = styled.div`
   color: rgba(255, 255, 255, 0.8);
   
   @media (max-width: 768px) {
-    font-size: 0.8rem;
+    font-size: 0.6rem;
+    text-align: left;
+    margin-top: 0.2rem;
   }
 `;
 
