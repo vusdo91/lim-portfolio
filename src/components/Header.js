@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { useLanguage } from '../contexts/LanguageContext';
 import { t } from '../utils/translations';
-import { IoLanguage, IoCheckmark } from 'react-icons/io5';
+import { LanguageIcon, CheckIcon } from './icons/SVGIcons';
 
 const HeaderContainer = styled.header`
   width: 100%;
@@ -369,7 +369,7 @@ const Header = () => {
         
         <LanguageContainer ref={dropdownRef}>
           <LanguageButton onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
-            <IoLanguage className="language-icon" />
+            <LanguageIcon className="language-icon" />
             {currentLanguageName}
           </LanguageButton>
           <DropdownMenu show={isDropdownOpen}>
@@ -401,7 +401,7 @@ const Header = () => {
               onClick={() => setIsMobileMenuOpen(false)}
             >
               {t('navigation.about', language)}
-              {location.pathname === '/about' && <IoCheckmark className="check-icon" />}
+              {location.pathname === '/about' && <CheckIcon className="check-icon" />}
             </MobileNavLink>
             <MobileNavLink 
               to="/works" 
@@ -409,7 +409,7 @@ const Header = () => {
               onClick={() => setIsMobileMenuOpen(false)}
             >
               {t('navigation.works', language)}
-              {location.pathname === '/works' && <IoCheckmark className="check-icon" />}
+              {location.pathname === '/works' && <CheckIcon className="check-icon" />}
             </MobileNavLink>
             <MobileNavLink 
               to="/contact" 
@@ -417,7 +417,7 @@ const Header = () => {
               onClick={() => setIsMobileMenuOpen(false)}
             >
               {t('navigation.contact', language)}
-              {location.pathname === '/contact' && <IoCheckmark className="check-icon" />}
+              {location.pathname === '/contact' && <CheckIcon className="check-icon" />}
             </MobileNavLink>
           </MobileNavSection>
           

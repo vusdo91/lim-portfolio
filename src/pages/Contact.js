@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { useLanguage } from '../contexts/LanguageContext';
 import { t } from '../utils/translations';
-import { IoCall, IoMail, IoLogoInstagram } from 'react-icons/io5';
+import { MobileIcon, MailIcon, InstagramIcon } from '../components/icons/SVGIcons';
 
 const ContactContainer = styled.div`
   min-height: calc(100vh - 112px);
@@ -57,15 +57,15 @@ const Contact = () => {
         
         <ContactInfo>
           <ContactItem>
-            <IoCall className="contact-icon" />
+            <MobileIcon className="contact-icon" />
             010-5164-5628
           </ContactItem>
           <ContactItem>
-            <IoMail className="contact-icon" />
+            <MailIcon className="contact-icon" />
             vusdo91@gmail.com
           </ContactItem>
           <ContactItem>
-            <IoLogoInstagram className="contact-icon" />
+            <InstagramIcon className="contact-icon" />
             instagram.com/limyunmook
           </ContactItem>
         </ContactInfo>

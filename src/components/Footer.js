@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { IoCall, IoMail, IoLogoInstagram } from 'react-icons/io5';
+import { MobileIcon, MailIcon, InstagramIcon } from './icons/SVGIcons';
 
 const FooterContainer = styled.footer`
   width: 100%;
@@ -80,15 +80,15 @@ const Footer = () => {
     <FooterContainer>
       <ContactInfo>
         <ContactItem href="tel:010-5164-5628">
-          <IoCall className="contact-icon" />
+          <MobileIcon className="contact-icon" />
           010-5164-5628
         </ContactItem>
         <ContactItem href="mailto:vusdo91@gmail.com">
-          <IoMail className="contact-icon" />
+          <MailIcon className="contact-icon" />
           vusdo91@gmail.com
         </ContactItem>
         <ContactItem href="https://instagram.com/limyunmook" target="_blank" rel="noopener noreferrer">
-          <IoLogoInstagram className="contact-icon" />
+          <InstagramIcon className="contact-icon" />
           instagram.com/limyunmook
         </ContactItem>
       </ContactInfo>
