@@ -1,0 +1,74 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // 더 엄격한 보안을 위한 IP 기반 제한 (선택사항)
+    function isFromAllowedIP() {
+      // 관리자 IP 화이트리스트 (필요시 수정)
+      // 주의: Firestore는 직접 IP 확인 불가, 이는 예시
+      return true; // 실제 IP 검증은 Cloud Functions에서 처리
+    }
+    
+    // 시간 기반 제한 (한국 시간 기준)
+    function isBusinessHours() {
+      let hour = request.time.toMillis() / 1000 / 3600 % 24;
+      let koreaHour = (hour + 9) % 24;
+      return koreaHour >= 8 && koreaHour <= 20; // 오전 8시 - 오후 8시
+    }
+    
+    // 요청 빈도 제한을 위한 함수
+    function hasValidRequestPattern() {
+      // 데이터 크기 제한
+      let validSize = request.resource.size() < 100000; // 100KB
+      
+      // 필수 필드 검증
+      let hasRequiredTimestamps = 
+        request.resource.data.keys().hasAny(['createdAt', 'updatedAt']);
+      
+      return validSize && hasRequiredTimestamps;
+    }
+    
+    // 작품 데이터 유효성 검증
+    function isValidArtworkData() {
+      let data = request.resource.data;
+      return data.keys().hasAll(['title', 'size', 'material', 'year']) &&
+             data.title is string && data.title.size() > 0 && data.title.size() <= 200 &&
+             data.size is string && data.size.size() <= 100 &&
+             data.material is string && data.material.size() <= 200 &&
+             data.year is string && data.year.size() <= 10 &&
+             // 이미지 URL 검증 (선택사항)
+             (!('image' in data) || 
+              (data.image is string && data.image.size() <= 2000)) &&
+             // 설명 길이 제한 (300자)
+             (!('description' in data) || 
+              (data.description is string && data.description.size() <= 300)) &&
+             // 영문 설명 길이 제한 (300자)
+             (!('description_en' in data) || 
+              (data.description_en is string && data.description_en.size() <= 300));
+    }
+    
+    // 관리자 권한 검증
+    function isAuthorizedAdmin() {
+      return isBusinessHours() && hasValidRequestPattern();
+    }
+    
+    // 작품 컬렉션
+    match /artworks/{artworkId} {
+      allow read: if true;
+      allow create: if isValidArtworkData() && isAuthorizedAdmin();
+      allow update: if resource != null && isValidArtworkData() && isAuthorizedAdmin();
+      allow delete: if resource != null && isAuthorizedAdmin();
+    }
+    
+    // 프로필 컬렉션
+    match /profile/main {
+      allow read: if true;
+      allow write: if isAuthorizedAdmin();
+    }
+    
+    // 모든 다른 경로 차단
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

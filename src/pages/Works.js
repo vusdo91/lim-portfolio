@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useArtworks } from '../contexts/ArtworkContext';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const WorksContainer = styled.div`
   min-height: calc(100vh - 112px);
@@ -76,6 +77,8 @@ const WorkInfo = styled.div`
   flex: 1;
   padding: 3rem 2rem;
   border-bottom: 1px solid #eee;
+  display: flex;
+  flex-direction: column;
   
   @media (max-width: 768px) {
     padding: 2rem;
@@ -98,9 +101,38 @@ const WorkInfo = styled.div`
     font-size: 0.8rem;
     color: #505050;
     line-height: 1;
+    margin-bottom: 1.5rem;
     
     div {
       margin-bottom: 0.5rem;
+    }
+  }
+  
+  .description {
+    font-size: 0.9rem;
+    color: #333;
+    line-height: 1.5;
+    flex: 1;
+    max-height: 200px;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+    
+    &::-webkit-scrollbar {
+      width: 2px;
+    }
+    
+    &::-webkit-scrollbar-track {
+      background: #f5f5f5;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background: #ccc;
+      border-radius: 1px;
+    }
+    
+    @media (max-width: 768px) {
+      font-size: 0.85rem;
+      max-height: 150px;
     }
   }
 `;
@@ -397,6 +429,7 @@ const ZoomButton = styled.button`
 
 const Works = () => {
   const { artworks } = useArtworks();
+  const { language } = useLanguage();
   const [activeIndex, setActiveIndex] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalImageIndex, setModalImageIndex] = useState(0);
@@ -660,6 +693,15 @@ const Works = () => {
               <div>{currentArtwork?.material}</div>
               <div>{currentArtwork?.year}</div>
             </div>
+            
+            {(currentArtwork?.description || currentArtwork?.description_en) && (
+              <div className="description">
+                {language === 'ko' 
+                  ? (currentArtwork?.description || currentArtwork?.description_en || '')
+                  : (currentArtwork?.description_en || currentArtwork?.description || '')
+                }
+              </div>
+            )}
           </WorkInfo>
           
           <ThumbnailSection>

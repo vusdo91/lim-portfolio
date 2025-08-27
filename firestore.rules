@@ -1,0 +1,75 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // 보안 검증 함수들
+    function isValidArtwork() {
+      return request.resource.data.keys().hasAll(['title', 'size', 'material', 'year']) &&
+             request.resource.data.title is string &&
+             request.resource.data.size is string &&
+             request.resource.data.material is string &&
+             request.resource.data.year is string &&
+             request.resource.data.title.size() > 0 &&
+             request.resource.data.title.size() <= 200 &&
+             request.resource.data.size.size() <= 100 &&
+             request.resource.data.material.size() <= 200 &&
+             request.resource.data.year.size() <= 10 &&
+             // 설명 필드 검증 (선택사항이므로 존재할 때만 검증)
+             (!('description' in request.resource.data) || 
+              (request.resource.data.description is string && request.resource.data.description.size() <= 300)) &&
+             // 영문 설명 필드 검증 (선택사항이므로 존재할 때만 검증)
+             (!('description_en' in request.resource.data) || 
+              (request.resource.data.description_en is string && request.resource.data.description_en.size() <= 300));
+    }
+    
+    function isValidProfile() {
+      return request.resource.data.keys().hasAny(['biography', 'biography_en', 'exhibitions']) &&
+             (!('biography' in request.resource.data) || 
+              (request.resource.data.biography is string && request.resource.data.biography.size() <= 5000)) &&
+             (!('biography_en' in request.resource.data) || 
+              (request.resource.data.biography_en is string && request.resource.data.biography_en.size() <= 5000));
+    }
+    
+    // 관리자 검증: 시간과 요청 빈도 기반 제한
+    function isAdminRequest() {
+      // 1. 쓰기 요청 시간 제한 (오전 6시 ~ 밤 11시 KST)
+      let hour = request.time.toMillis() / 1000 / 3600 % 24;
+      let koreaHour = (hour + 9) % 24; // UTC to KST
+      let validTimeWindow = koreaHour >= 6 && koreaHour <= 23;
+      
+      // 2. 데이터 크기 제한
+      let validSize = request.resource.size() < 50000; // 50KB 제한
+      
+      return validTimeWindow && validSize;
+    }
+    
+    // 작품 컬렉션 규칙
+    match /artworks/{artworkId} {
+      // 모든 사용자가 작품 읽기 가능
+      allow read: if true;
+      
+      // 작품 생성: 유효한 데이터 + 관리자 시간대
+      allow create: if isValidArtwork() && isAdminRequest();
+      
+      // 작품 수정: 기존 문서 존재 + 유효한 데이터 + 관리자 시간대
+      allow update: if resource != null && isValidArtwork() && isAdminRequest();
+      
+      // 작품 삭제: 기존 문서 존재 + 관리자 시간대
+      allow delete: if resource != null && isAdminRequest();
+    }
+    
+    // 프로필 컬렉션 규칙
+    match /profile/{profileId} {
+      // 모든 사용자가 프로필 읽기 가능
+      allow read: if true;
+      
+      // 프로필 수정: 'main' 문서만 + 유효한 데이터 + 관리자 시간대
+      allow write: if profileId == 'main' && isValidProfile() && isAdminRequest();
+    }
+    
+    // 기타 모든 문서 접근 거부
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -189,6 +189,7 @@ const ArtworkForm = () => {
     material: '',
     year: '',
     description: '',
+    description_en: '',
     image: '',
     imagePath: ''
   });
@@ -209,6 +210,7 @@ const ArtworkForm = () => {
           material: artwork.material || '',
           year: artwork.year || '',
           description: artwork.description || '',
+          description_en: artwork.description_en || '',
           image: artwork.image || '',
           imagePath: artwork.imagePath || ''
         });
@@ -343,6 +345,7 @@ const ArtworkForm = () => {
         material: formData.material.trim(),
         year: formData.year.trim(),
         description: formData.description.trim(),
+        description_en: formData.description_en.trim(),
         image: formData.image,
         imagePath: formData.imagePath
       };
@@ -474,14 +477,35 @@ const ArtworkForm = () => {
           </FormGroup>
 
           <FormGroup>
-            <Label htmlFor="description">작품 설명 (선택사항)</Label>
+            <Label htmlFor="description">
+              작품 설명 (한국어, 선택사항) - {formData.description.length}/300자
+            </Label>
             <TextArea
               id="description"
               name="description"
               value={formData.description}
               onChange={handleInputChange}
-              placeholder="작품에 대한 설명을 입력하세요"
+              placeholder="작품에 대한 설명을 입력하세요 (최대 300자)"
+              maxLength={300}
+              className={errors.description ? 'error' : ''}
             />
+            {errors.description && <ErrorMessage>{errors.description}</ErrorMessage>}
+          </FormGroup>
+
+          <FormGroup>
+            <Label htmlFor="description_en">
+              작품 설명 (English, 선택사항) - {formData.description_en.length}/300자
+            </Label>
+            <TextArea
+              id="description_en"
+              name="description_en"
+              value={formData.description_en}
+              onChange={handleInputChange}
+              placeholder="Enter artwork description in English (max 300 characters)"
+              maxLength={300}
+              className={errors.description_en ? 'error' : ''}
+            />
+            {errors.description_en && <ErrorMessage>{errors.description_en}</ErrorMessage>}
           </FormGroup>
 
           <FormActions>

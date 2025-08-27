@@ -103,9 +103,11 @@ const BiographyText = styled.div`
 const ExhibitionTable = styled.table`
   width: 100%;
   border-collapse: collapse;
+  font-size: 0.85rem;
+  table-layout: fixed;
   
   th, td {
-    padding: 1rem;
+    padding: 0.75rem;
     text-align: left;
     border-bottom: 1px solid #eee;
   }
@@ -114,28 +116,51 @@ const ExhibitionTable = styled.table`
     background: #f5f5f5;
     font-weight: 600;
     color: #333;
+    font-size: 0.8rem;
+  }
+  
+  td {
+    font-size: 0.85rem;
   }
   
   tr:hover {
     background: #f5f5f5;
   }
+  
+  /* 컬럼 너비 설정 */
+  th:nth-child(1), td:nth-child(1) { width: 60px; }   /* 구분 */
+  th:nth-child(2), td:nth-child(2) { width: 60px; }   /* 연도 */
+  th:nth-child(3), td:nth-child(3) { width: 35%; }    /* 한국어 전시명 */
+  th:nth-child(4), td:nth-child(4) { width: 35%; }    /* 영문 전시명 */
+  th:nth-child(5), td:nth-child(5) { width: 80px; }   /* 관리 */
 `;
 
 const TypeBadge = styled.span`
-  padding: 0.25rem 0.5rem;
+  padding: 0.25rem 0.6rem;
   border-radius: 12px;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 500;
+  display: inline-block;
   
   &.solo {
-    background: #ebebeb;
-    color: #2d2d2d;
+    background: #e3f2fd;
+    color: #1565c0;
+    border: 1px solid #bbdefb;
   }
   
   &.group {
-    background: #ebebeb;
-    color: #2d2d2d;
+    background: #f3e5f5;
+    color: #7b1fa2;
+    border: 1px solid #ce93d8;
   }
+`;
+
+const TruncatedText = styled.div`
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  title: ${props => props.title || ''};
 `;
 
 const ActionButtons = styled.div`
@@ -143,29 +168,92 @@ const ActionButtons = styled.div`
   gap: 0.5rem;
 `;
 
-const SmallButton = styled.button`
-  padding: 0.25rem 0.5rem;
+const IconButton = styled.button`
+  padding: 0.4rem;
   border: none;
-  border-radius: 3px;
+  border-radius: 4px;
   cursor: pointer;
-  font-size: 0.8rem;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  position: relative;
   
   &.edit {
-    background: #525252;
-    color: white;
+    background: #2d2d2d;
     
     &:hover {
-      background: #2d2d2d;
+      background: #1a1a1a;
+      transform: scale(1.1);
+    }
+    
+    svg {
+      width: 14px;
+      height: 14px;
+      fill: white;
     }
   }
   
   &.delete {
-    background: #2d2d2d;
-    color: white;
+    background: #dc3545;
     
     &:hover {
-      background: #1a1a1a;
+      background: #c82333;
+      transform: scale(1.1);
     }
+    
+    &:disabled {
+      background: #f8d7da;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    &::before {
+      content: '';
+      width: 12px;
+      height: 1.5px;
+      background: white;
+      position: absolute;
+      transform: rotate(45deg);
+    }
+    
+    &::after {
+      content: '';
+      width: 12px;
+      height: 1.5px;
+      background: white;
+      position: absolute;
+      transform: rotate(-45deg);
+    }
+    
+    &:disabled::before,
+    &:disabled::after {
+      background: #721c24;
+    }
+  }
+  
+  &.loading {
+    &::before {
+      content: '';
+      width: 12px;
+      height: 12px;
+      border: 1.5px solid white;
+      border-top: 1.5px solid transparent;
+      border-radius: 50%;
+      position: absolute;
+      animation: spin 1s linear infinite;
+    }
+    
+    &::after {
+      display: none;
+    }
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
   }
 `;
 
@@ -371,27 +459,37 @@ const ProfileManagement = () => {
                     <tr key={exhibition.id}>
                       <td>
                         <TypeBadge className={exhibition.type}>
-                          {exhibition.type === 'solo' ? '개인전' : '그룹전'}
+                          {exhibition.type === 'solo' ? '개인' : '그룹'}
                         </TypeBadge>
                       </td>
                       <td>{exhibition.year}</td>
-                      <td>{exhibition.name}</td>
-                      <td>{exhibition.name_en || '영문명 없음'}</td>
+                      <td>
+                        <TruncatedText title={exhibition.name}>
+                          {exhibition.name}
+                        </TruncatedText>
+                      </td>
+                      <td>
+                        <TruncatedText title={exhibition.name_en || '영문명 없음'}>
+                          {exhibition.name_en || '영문명 없음'}
+                        </TruncatedText>
+                      </td>
                       <td>
                         <ActionButtons>
-                          <SmallButton 
+                          <IconButton 
                             className="edit" 
                             onClick={() => handleEditExhibition(exhibition.id)}
+                            title="수정"
                           >
-                            수정
-                          </SmallButton>
-                          <SmallButton 
-                            className="delete" 
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M13 2.71754V4.74727H4V19.9703H20V9.82161H22V22H2V2.71754H13ZM21.707 3.43508L8.70703 16.6283L7.29297 15.1933L20.293 2L21.707 3.43508Z" fill="white"/>
+                            </svg>
+                          </IconButton>
+                          <IconButton 
+                            className={`delete ${deletingId === exhibition.id ? 'loading' : ''}`}
                             onClick={() => handleDeleteExhibition(exhibition.id)}
                             disabled={deletingId === exhibition.id}
-                          >
-                            {deletingId === exhibition.id ? '삭제 중...' : '삭제'}
-                          </SmallButton>
+                            title={deletingId === exhibition.id ? '삭제 중...' : '삭제'}
+                          />
                         </ActionButtons>
                       </td>
                     </tr>
