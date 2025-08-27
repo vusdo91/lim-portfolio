@@ -85,7 +85,7 @@ const MainContent = styled.main`
   overflow-x: hidden;
   
   @media (max-width: 768px) {
-    height: calc(100vh - 150px);
+    height: calc(100vh - 170px);
     margin-top: 70px;
     padding: 0;
   }

@@ -17,10 +17,10 @@ const FooterContainer = styled.footer`
     align-items: flex-start;
     justify-content: flex-start;
     gap: 0.3rem;
-    padding: 1rem 1rem;
+    padding: 1.2rem 1rem 1.5rem 1rem;
     text-align: left;
     height: auto;
-    min-height: 80px;
+    min-height: 100px;
     font-size: 0.7rem;
   }
 `;
@@ -33,9 +33,9 @@ const ContactInfo = styled.div`
   @media (max-width: 768px) {
     flex-direction: column;
     align-items: flex-start;
-    gap: 0.2rem;
+    gap: 0.6rem;
     font-size: 0.6rem;
-    margin-bottom: 0.4rem;
+    margin-bottom: 0.6rem;
   }
 `;
 
@@ -71,7 +71,7 @@ const Copyright = styled.div`
   @media (max-width: 768px) {
     font-size: 0.6rem;
     text-align: left;
-    margin-top: 0.2rem;
+    margin-top: 0.4rem;
   }
 `;
 
