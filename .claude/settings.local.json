@@ -12,7 +12,9 @@
       "Bash(npm start)",
       "Bash(set PORT=3001)",
       "Bash(find:*)",
-      "WebFetch(domain:firebase.google.com)"
+      "WebFetch(domain:firebase.google.com)",
+      "Bash(git log:*)",
+      "Bash(git config:*)"
     ],
     "deny": [],
     "ask": [],
