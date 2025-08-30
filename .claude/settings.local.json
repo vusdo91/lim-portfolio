@@ -14,7 +14,8 @@
       "Bash(find:*)",
       "WebFetch(domain:firebase.google.com)",
       "Bash(git log:*)",
-      "Bash(git config:*)"
+      "Bash(git config:*)",
+      "Bash(cmdkey:*)"
     ],
     "deny": [],
     "ask": [],
