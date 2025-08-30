@@ -1,0 +1,47 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // 개발용 간단한 보안 규칙
+    function isValidArtwork() {
+      return request.resource.data.keys().hasAll(['title', 'size', 'material', 'year']) &&
+             request.resource.data.title is string &&
+             request.resource.data.size is string &&
+             request.resource.data.material is string &&
+             request.resource.data.year is string &&
+             request.resource.data.title.size() > 0 &&
+             request.resource.data.title.size() <= 200;
+    }
+    
+    function isValidProfile() {
+      return request.resource.data.keys().hasAny(['biography', 'biography_en', 'exhibitions']) &&
+             (!('biography' in request.resource.data) || 
+              (request.resource.data.biography is string && request.resource.data.biography.size() <= 5000));
+    }
+    
+    // 작품 컬렉션 규칙 (개발용 - 시간 제한 제거)
+    match /artworks/{artworkId} {
+      // 모든 사용자가 작품 읽기 가능
+      allow read: if true;
+      
+      // 개발용: 유효한 데이터면 쓰기 허용 (시간/크기 제한 제거)
+      allow create: if isValidArtwork();
+      allow update: if resource != null && isValidArtwork();
+      allow delete: if resource != null;
+    }
+    
+    // 프로필 컬렉션 규칙 (개발용)
+    match /profile/{profileId} {
+      // 모든 사용자가 프로필 읽기 가능
+      allow read: if true;
+      
+      // 개발용: 'main' 문서에 유효한 데이터면 쓰기 허용
+      allow write: if profileId == 'main' && isValidProfile();
+    }
+    
+    // 기타 모든 문서 접근 거부
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
