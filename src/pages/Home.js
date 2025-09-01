@@ -83,6 +83,52 @@ const WhiteOverlay = styled.div`
   z-index: 2;
 `;
 
+const SkeletonContainer = styled.div`
+  width: 360px;
+  height: 480px;
+  background: #f0f0f0;
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+  
+  @media (max-width: 768px) {
+    width: 100%;
+    height: 100%;
+  }
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+    animation: shimmer 1.5s infinite;
+  }
+  
+  @keyframes shimmer {
+    0% {
+      left: -100%;
+    }
+    100% {
+      left: 100%;
+    }
+  }
+`;
+
+const PlaceholderContainer = styled.div`
+  width: 360px;
+  height: 480px;
+  background: #e0e0e0;
+  border-radius: 8px;
+  
+  @media (max-width: 768px) {
+    width: 100%;
+    height: 100%;
+  }
+`;
+
 
 
 const Home = () => {
@@ -91,6 +137,8 @@ const Home = () => {
   const [nextImages, setNextImages] = useState([]);
   const [showCurrent, setShowCurrent] = useState(true);
   const [isWhiteFlash, setIsWhiteFlash] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [showSkeleton, setShowSkeleton] = useState(false);
 
   const getRandomArtworks = () => {
     if (!artworks || artworks.length === 0) return [];
@@ -115,12 +163,26 @@ const Home = () => {
   };
 
   useEffect(() => {
+    // 100ms 후에 skeleton screen 표시
+    const skeletonTimer = setTimeout(() => {
+      if (isLoading) {
+        setShowSkeleton(true);
+      }
+    }, 100);
+
     // artworks가 로드된 후 초기 이미지 설정
-    if (artworks && artworks.length > 0) {
-      const initialImages = getRandomArtworks();
-      setCurrentImages(initialImages);
-      setNextImages(getRandomArtworks());
+    if (artworks !== undefined) {
+      setIsLoading(false);
+      setShowSkeleton(false);
+      
+      if (artworks.length > 0) {
+        const initialImages = getRandomArtworks();
+        setCurrentImages(initialImages);
+        setNextImages(getRandomArtworks());
+      }
     }
+
+    return () => clearTimeout(skeletonTimer);
   }, [artworks]);
 
   useEffect(() => {
@@ -151,19 +213,44 @@ const Home = () => {
     return () => clearInterval(interval);
   }, [nextImages]);
 
-  if (!artworks || artworks.length === 0 || currentImages.length === 0) {
+  // 로딩 상태: skeleton screen 표시
+  if (showSkeleton || (artworks === undefined)) {
     return (
       <HomeContainer>
-        <div style={{ 
-          display: 'flex', 
-          alignItems: 'center', 
-          justifyContent: 'center', 
-          height: '50vh',
-          color: '#666',
-          fontSize: '1.2rem'
-        }}>
-          {artworks && artworks.length === 0 ? '작품이 없습니다.' : 'Loading...'}
-        </div>
+        <MainContent>
+          <SkeletonContainer />
+          <SkeletonContainer />
+          <SkeletonContainer />
+          <SkeletonContainer />
+        </MainContent>
+      </HomeContainer>
+    );
+  }
+
+  // 작품이 없는 경우: 회색 placeholder 표시
+  if (artworks && artworks.length === 0) {
+    return (
+      <HomeContainer>
+        <MainContent>
+          <PlaceholderContainer />
+          <PlaceholderContainer />
+          <PlaceholderContainer />
+          <PlaceholderContainer />
+        </MainContent>
+      </HomeContainer>
+    );
+  }
+
+  // 작품은 있지만 currentImages가 아직 설정되지 않은 경우
+  if (currentImages.length === 0) {
+    return (
+      <HomeContainer>
+        <MainContent>
+          <SkeletonContainer />
+          <SkeletonContainer />
+          <SkeletonContainer />
+          <SkeletonContainer />
+        </MainContent>
       </HomeContainer>
     );
   }
