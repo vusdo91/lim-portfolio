@@ -188,7 +188,7 @@ const ExhibitionItem = styled.div`
 
 const About = () => {
   const { language } = useLanguage();
-  const { profile } = useProfile();
+  const { profile, syncDefaultData } = useProfile();
   
   // 언어에 따라 전시 데이터 선택 및 연도별 그룹화
   const getExhibitionData = () => {
@@ -241,9 +241,42 @@ const About = () => {
   const soloExhibitions = exhibitionData.solo;
   const groupExhibitions = exhibitionData.group;
   
+  // 임시 동기화 함수 (개발용)
+  const handleSyncData = async () => {
+    console.log('데이터 동기화 시작...');
+    const result = await syncDefaultData();
+    if (result.success) {
+      console.log('데이터 동기화 성공');
+      alert('데이터가 동기화되었습니다. 페이지를 새로고침하세요.');
+    } else {
+      console.error('데이터 동기화 실패:', result.error);
+      alert('데이터 동기화에 실패했습니다.');
+    }
+  };
+
   return (
     <AboutContainer>
       <ContentArea>
+        {/* 임시 동기화 버튼 (개발용) */}
+        {process.env.NODE_ENV === 'development' && (
+          <button 
+            onClick={handleSyncData}
+            style={{
+              position: 'fixed',
+              top: '10px',
+              right: '10px',
+              padding: '10px',
+              backgroundColor: '#ff4444',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              zIndex: 1000
+            }}
+          >
+            DB 동기화
+          </button>
+        )}
         
         <ContentWrapper>
           <Biography className="noto-sans">

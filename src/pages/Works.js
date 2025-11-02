@@ -5,7 +5,7 @@ import { useLanguage } from '../contexts/LanguageContext';
 
 const WorksContainer = styled.div`
   min-height: calc(100vh - 112px);
-  background: #f5f5f5;
+  background: #ffffff;
   padding: 0;
   
   @media (max-width: 768px) {
@@ -41,7 +41,7 @@ const ImageSection = styled.div`
 const ImageContainer = styled.div`
   width: 640px;
   height: 640px;
-  background: #f5f5f5;
+  background: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -204,7 +204,7 @@ const ThumbnailSection = styled.div`
 
 const ThumbnailGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, 24px);
+  grid-template-columns: repeat(auto-fit, 40px);
   gap: 4px;
   
   @media (max-width: 768px) {
@@ -214,8 +214,8 @@ const ThumbnailGrid = styled.div`
 `;
 
 const ThumbnailContainer = styled.div`
-  width: 24px;
-  height: 24px;
+  width: 40px;
+  height: 40px;
   cursor: pointer;
   border: 1px solid transparent;
   transition: all 0.2s ease;

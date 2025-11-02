@@ -57,10 +57,6 @@ const Contact = () => {
         
         <ContactInfo>
           <ContactItem>
-            <MobileIcon className="contact-icon" />
-            010-5164-5628
-          </ContactItem>
-          <ContactItem>
             <MailIcon className="contact-icon" />
             vusdo91@gmail.com
           </ContactItem>

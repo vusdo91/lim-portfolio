@@ -38,16 +38,21 @@ export const ProfileProvider = ({ children }) => {
       { id: 2, type: 'solo', year: '2023', name: '양탄자 무늬, 청주미술창작스튜디오, 청주', name_en: 'Carpet Pattern, Cheongju Art Studio, Cheongju' },
       { id: 3, type: 'solo', year: '2019', name: 'Curtaincall, 갤러리 그리다, 서울', name_en: 'Curtaincall, Gallery Grida, Seoul' },
       { id: 4, type: 'solo', year: '2018', name: '시간의 흐름 속에서, 대안공간 눈, 수원', name_en: 'In the Flow of Time, Alternative Space Eye, Suwon' },
-      { id: 5, type: 'group', year: '2024', name: '의미를 갖는 순간, 에브리아트, 서울', name_en: 'The Moment of Meaning, EveryArt, Seoul' },
-      { id: 6, type: 'group', year: '2024', name: '무늬를 삼킨 문, 윤진약국(소현문 주관), 용인', name_en: 'Door that Swallowed the Pattern, Yunjin Pharmacy (curated by So Hyeon-mun), Yongin' },
-      { id: 7, type: 'group', year: '2023', name: '페리지 윈터쇼, 페리지갤러리, 서울', name_en: 'Perigee Winter Show, Perigee Gallery, Seoul' },
-      { id: 8, type: 'group', year: '2023', name: '회화 유니버스, 예술의전당 한가람디자인미술관, 서울', name_en: 'Painting Universe, Hangaram Design Museum, Seoul Arts Center, Seoul' },
-      { id: 9, type: 'group', year: '2022', name: '가위가위바위바위보보, 오픈스페이스배, 부산', name_en: 'Rock Paper Scissors, Open Space Bae, Busan' },
-      { id: 10, type: 'group', year: '2022', name: '거의 정보가 없는 전시, 부산현대미술관, 부산', name_en: 'Exhibition with Almost No Information, Museum of Contemporary Art Busan, Busan' },
-      { id: 11, type: 'group', year: '2022', name: '일상이라는 몸, 쉐마미술관, 청주', name_en: 'The Body Called Daily Life, Cheongju Museum of Art, Cheongju' },
-      { id: 12, type: 'group', year: '2021', name: '머리 위 파도 가슴 밑 구름, 이목화랑 서울', name_en: 'Waves Above the Head, Clouds Below the Chest, Leemok Gallery, Seoul' },
-      { id: 13, type: 'group', year: '2021', name: 'P는 그림을 걸었다, d/p, 서울', name_en: 'P Hung a Painting, d/p, Seoul' },
-      { id: 14, type: 'group', year: '2020', name: '사각의 사각, 예술공간 의식주, 서울', name_en: 'Square of Squares, Art Space Euisikju, Seoul' }
+      { id: 5, type: 'group', year: '2025', name: '느슨한 유역, 충북갤러리, 서울', name_en: 'Loose Watershed, Chungbuk Gallery, Seoul' },
+      { id: 6, type: 'group', year: '2025', name: '사건의 무대, 대전시립미술관, 대전', name_en: 'Stage of Events, Daejeon Museum of Art, Daejeon' },
+      { id: 7, type: 'group', year: '2025', name: '인상화 - 작가의 시선, 에브리아트, 서울', name_en: 'Impressions - Artist\'s Perspective, Every Art, Seoul' },
+      { id: 8, type: 'group', year: '2025', name: '느린 여름, 갤러리 아울, 후쿠오카', name_en: 'Slow Summer, Gallery Owl, Fukuoka' },
+      { id: 9, type: 'group', year: '2025', name: '교차된 시대의 흔적, 뮤지엄호두, 천안', name_en: 'Traces of Intersected Eras, Museum Hodu, Cheonan' },
+      { id: 10, type: 'group', year: '2024', name: '의미를 갖는 순간, 에브리아트, 서울', name_en: 'The Moment of Meaning, EveryArt, Seoul' },
+      { id: 11, type: 'group', year: '2024', name: '무늬를 삼킨 문, 윤진약국(소현문 주관), 용인', name_en: 'Door that Swallowed the Pattern, Yunjin Pharmacy (curated by So Hyeon-mun), Yongin' },
+      { id: 12, type: 'group', year: '2023', name: '페리지 윈터쇼, 페리지갤러리, 서울', name_en: 'Perigee Winter Show, Perigee Gallery, Seoul' },
+      { id: 13, type: 'group', year: '2023', name: '회화 유니버스, 예술의전당 한가람디자인미술관, 서울', name_en: 'Painting Universe, Hangaram Design Museum, Seoul Arts Center, Seoul' },
+      { id: 14, type: 'group', year: '2022', name: '가위가위바위바위보보, 오픈스페이스배, 부산', name_en: 'Rock Paper Scissors, Open Space Bae, Busan' },
+      { id: 15, type: 'group', year: '2022', name: '거의 정보가 없는 전시, 부산현대미술관, 부산', name_en: 'Exhibition with Almost No Information, Museum of Contemporary Art Busan, Busan' },
+      { id: 16, type: 'group', year: '2022', name: '일상이라는 몸, 쉐마미술관, 청주', name_en: 'The Body Called Daily Life, Cheongju Museum of Art, Cheongju' },
+      { id: 17, type: 'group', year: '2021', name: '머리 위 파도 가슴 밑 구름, 이목화랑 서울', name_en: 'Waves Above the Head, Clouds Below the Chest, Leemok Gallery, Seoul' },
+      { id: 18, type: 'group', year: '2021', name: 'P는 그림을 걸었다, d/p, 서울', name_en: 'P Hung a Painting, d/p, Seoul' },
+      { id: 19, type: 'group', year: '2020', name: '사각의 사각, 예술공간 의식주, 서울', name_en: 'Square of Squares, Art Space Euisikju, Seoul' }
     ],
     createdAt: new Date(),
     updatedAt: new Date()
@@ -208,6 +213,20 @@ export const ProfileProvider = ({ children }) => {
     setError(null);
   };
 
+  // 기본 데이터로 강제 동기화 (개발용)
+  const syncDefaultData = async () => {
+    try {
+      const defaultProfile = getDefaultProfile();
+      const profileRef = doc(db, 'profile', 'main');
+      await setDoc(profileRef, defaultProfile);
+      console.log('기본 데이터로 동기화 완료');
+      return { success: true };
+    } catch (error) {
+      console.error('데이터 동기화 실패:', error);
+      return { success: false, error: error.message };
+    }
+  };
+
   return (
     <ProfileContext.Provider value={{
       profile,
@@ -218,7 +237,8 @@ export const ProfileProvider = ({ children }) => {
       updateExhibition,
       deleteExhibition,
       getExhibitionById,
-      clearError
+      clearError,
+      syncDefaultData
     }}>
       {children}
     </ProfileContext.Provider>

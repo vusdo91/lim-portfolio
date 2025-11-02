@@ -15,7 +15,8 @@
       "WebFetch(domain:firebase.google.com)",
       "Bash(git log:*)",
       "Bash(git config:*)",
-      "Bash(cmdkey:*)"
+      "Bash(cmdkey:*)",
+      "Bash(npm run build:*)"
     ],
     "deny": [],
     "ask": [],

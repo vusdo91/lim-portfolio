@@ -38,6 +38,10 @@ export const translations = {
       ],
       groupExhibitionItems: [
         { 
+          year: '2025', 
+          content: '느슨한 유역, 충북갤러리, 서울<br/>사건의 무대, 대전시립미술관, 대전<br/>인상화 - 작가의 시선, 에브리아트, 서울<br/>느린 여름, 갤러리 아울, 후쿠오카<br/>교차된 시대의 흔적, 뮤지엄호두, 천안' 
+        },
+        { 
           year: '2024', 
           content: '의미를 갖는 순간, 에브리아트, 서울<br/>무늬를 삼킨 문, 윤진약국(소현문 주관), 용인' 
         },
@@ -119,6 +123,10 @@ export const translations = {
         { year: '2018', content: 'In the Flow of Time, Alternative Space NOON, Suwon' }
       ],
       groupExhibitionItems: [
+        { 
+          year: '2025', 
+          content: 'Loose Watershed, Chungbuk Gallery, Seoul<br/>Stage of Events, Daejeon Museum of Art, Daejeon<br/>Impressions - Artist\'s Perspective, Every Art, Seoul<br/>Slow Summer, Gallery Owl, Fukuoka<br/>Traces of Intersected Eras, Museum Hodu, Cheonan' 
+        },
         { 
           year: '2024', 
           content: 'The Moment of Meaning, EveryArt, Seoul<br/>The Door That Swallowed Patterns, Yunjin Pharmacy (curated by So Hyun Moon), Yongin' 
