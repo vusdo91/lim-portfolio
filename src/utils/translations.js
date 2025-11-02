@@ -125,7 +125,7 @@ export const translations = {
       groupExhibitionItems: [
         { 
           year: '2025', 
-          content: 'Loose Watershed, Chungbuk Gallery, Seoul<br/>Stage of Events, Daejeon Museum of Art, Daejeon<br/>Impressions - Artist\'s Perspective, Every Art, Seoul<br/>Slow Summer, Gallery Owl, Fukuoka<br/>Traces of Intersected Eras, Museum Hodu, Cheonan' 
+          content: 'Loose Basin, Chungbuk Gallery, Seoul<br/>Stage Where It All Unfolded, Daejeon Museum of Art, Daejeon<br/>Impressions - Artist\'s Perspective, Every Art, Seoul<br/>Slow Shower, Gallery Owl, Fukuoka<br/>Traces of Intersected Eras, Museum Hodu, Cheonan' 
         },
         { 
           year: '2024', 
