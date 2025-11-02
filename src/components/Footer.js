@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { MobileIcon, MailIcon, InstagramIcon } from './icons/SVGIcons';
+import { MailIcon, InstagramIcon } from './icons/SVGIcons';
 
 const FooterContainer = styled.footer`
   width: 100%;
@@ -79,10 +79,6 @@ const Footer = () => {
   return (
     <FooterContainer>
       <ContactInfo>
-        <ContactItem href="tel:010-5164-5628">
-          <MobileIcon className="contact-icon" />
-          010-5164-5628
-        </ContactItem>
         <ContactItem href="mailto:vusdo91@gmail.com">
           <MailIcon className="contact-icon" />
           vusdo91@gmail.com
