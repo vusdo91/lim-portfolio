@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { useAuth } from '../../contexts/AuthContext';
+import { useFirebaseAuth } from '../../contexts/FirebaseAuthContext';
 import { useArtworks } from '../../contexts/ArtworkContext';
 import { useProfile } from '../../contexts/ProfileContext';
 
@@ -128,9 +128,28 @@ const LoadingMessage = styled.div`
 `;
 
 const AdminDashboard = () => {
-  const { logout } = useAuth();
+  const { logout, user } = useFirebaseAuth();
   const { artworks, isLoading: artworksLoading } = useArtworks();
   const { profile, isLoading: profileLoading } = useProfile();
+  const [visitorStats, setVisitorStats] = useState(null);
+
+  useEffect(() => {
+    let active = true;
+    const loadVisitorStats = async () => {
+      try {
+        const token = await user?.getIdToken();
+        if (!token) return;
+        const response = await fetch('/api/visitor-stats', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (response.ok && active) setVisitorStats(await response.json());
+      } catch (error) {
+        console.error('Visitor stats could not be loaded:', error);
+      }
+    };
+    loadVisitorStats();
+    return () => { active = false; };
+  }, [user]);
 
   const handleLogout = () => {
     logout();
@@ -167,6 +186,12 @@ const AdminDashboard = () => {
           <LoadingMessage>데이터 로딩 중...</LoadingMessage>
         ) : (
           <StatsGrid>
+            <StatCard>
+              <StatNumber>{visitorStats ? visitorStats.totalVisits.toLocaleString() : '-'}</StatNumber>
+              <StatLabel>누적 방문</StatLabel>
+              <StatDescription>오늘 {visitorStats ? visitorStats.todayVisits.toLocaleString() : '-'}명 · 최근 7일 {visitorStats ? visitorStats.lastSevenDaysVisits.toLocaleString() : '-'}명</StatDescription>
+            </StatCard>
+
             <StatCard>
               <StatNumber>{stats.artworks}</StatNumber>
               <StatLabel>등록된 작품</StatLabel>

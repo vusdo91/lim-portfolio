@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
-import { useAuth } from '../../contexts/AuthContext';
+import { useFirebaseAuth } from '../../contexts/FirebaseAuthContext';
 
 const LoginContainer = styled.div`
   min-height: 100vh;
@@ -97,12 +97,12 @@ const BackToSite = styled.a`
 `;
 
 const AdminLogin = () => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   
-  const { login, isAuthenticated } = useAuth();
+  const { login, isAuthenticated } = useFirebaseAuth();
   const location = useLocation();
   
   // 이미 로그인된 경우 관리자 대시보드로 리다이렉트
@@ -117,7 +117,7 @@ const AdminLogin = () => {
     setIsLoading(true);
 
     try {
-      const result = await login(username, password);
+      const result = await login(email, password);
       
       if (!result.success) {
         setError(result.message);
@@ -138,12 +138,13 @@ const AdminLogin = () => {
         {error && <ErrorMessage>{error}</ErrorMessage>}
         
         <InputGroup>
-          <Label htmlFor="username">사용자명</Label>
+          <Label htmlFor="email">이메일</Label>
           <Input
-            id="username"
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            id="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            autoComplete="email"
             required
           />
         </InputGroup>
@@ -155,6 +156,7 @@ const AdminLogin = () => {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            autoComplete="current-password"
             required
           />
         </InputGroup>

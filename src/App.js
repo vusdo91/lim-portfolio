@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import styled, { createGlobalStyle } from 'styled-components';
 import { LanguageProvider } from './contexts/LanguageContext';
-import { AuthProvider } from './contexts/AuthContext';
+import { FirebaseAuthProvider } from './contexts/FirebaseAuthContext';
 import { ArtworkProvider } from './contexts/ArtworkContext';
 import { ProfileProvider } from './contexts/ProfileContext';
 import Header from './components/Header';
@@ -19,6 +19,7 @@ import ArtworkForm from './pages/admin/ArtworkForm';
 import ProfileManagement from './pages/admin/ProfileManagement';
 import BiographyEdit from './pages/admin/BiographyEdit';
 import ExhibitionForm from './pages/admin/ExhibitionForm';
+import VisitorTracker from './components/VisitorTracker';
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -107,12 +108,13 @@ const PageContent = styled.div`
 
 function App() {
   return (
-    <AuthProvider>
+    <FirebaseAuthProvider>
       <ArtworkProvider>
         <ProfileProvider>
           <LanguageProvider>
             <Router>
               <GlobalStyle />
+              <VisitorTracker />
               <Routes>
             {/* 일반 사이트 라우트 */}
             <Route path="/" element={
@@ -220,7 +222,7 @@ function App() {
       </LanguageProvider>
     </ProfileProvider>
   </ArtworkProvider>
-</AuthProvider>
+</FirebaseAuthProvider>
   );
 }
 

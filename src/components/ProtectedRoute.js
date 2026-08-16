@@ -1,6 +1,6 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useFirebaseAuth } from '../contexts/FirebaseAuthContext';
 import styled from 'styled-components';
 
 const LoadingContainer = styled.div`
@@ -13,7 +13,7 @@ const LoadingContainer = styled.div`
 `;
 
 const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading } = useFirebaseAuth();
 
   if (isLoading) {
     return <LoadingContainer>Loading...</LoadingContainer>;
