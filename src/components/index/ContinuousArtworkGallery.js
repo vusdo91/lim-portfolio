@@ -88,7 +88,7 @@ const GalleryTrack = styled.div`
   width: max-content;
   transform-style: preserve-3d;
   height: 100%;
-  gap: ${props => props.$mobile ? '16vw' : '20px'};
+  gap: 20px;
   padding-left: var(--start-padding, 0px);
   padding-right: var(--end-padding, 0px);
   will-change: transform;
@@ -221,7 +221,10 @@ const ContinuousArtworkGallery = ({
   pointerMoveX,
   pointerMoveY,
   pointerTiltY = 0,
-  onArtworkOpen
+  onArtworkOpen,
+  autoFlow = false,
+  autoFlowSpeed = 64,
+  autoFlowIdleMs = 3000
 }) => {
   const viewportRef = useRef(null);
   const rootRef = useRef(null);
@@ -290,6 +293,46 @@ const ContinuousArtworkGallery = ({
     let wheelVelocity = 0;
     let wheelTime = null;
     let returningToStart = false;
+    let autoFrame = null;
+    let idleTimer = null;
+    let autoTime = null;
+    let autoAllowed = true;
+    let windowActive = !document.hidden;
+    const stopAuto = () => {
+      if (autoFrame !== null) window.cancelAnimationFrame(autoFrame);
+      autoFrame = null;
+      autoTime = null;
+    };
+    const flow = timestamp => {
+      autoFrame = null;
+      if (!autoFlow || cards.length < 2 || !enabled || reducedMotion || !windowActive || !autoAllowed) return;
+      const elapsed = autoTime === null ? 0 : Math.min(64, Math.max(0, timestamp - autoTime));
+      autoTime = timestamp;
+      if (animationFrameRef.current === null && previousTouchXRef.current === null && !returningToStart) {
+        leaveKeyboardMode();
+        const next = getNextGalleryOffset(currentOffsetRef.current, elapsed * autoFlowSpeed / 1000, maxOffsetRef.current);
+        targetOffsetRef.current = next;
+        renderOffset(next);
+        if (maxOffsetRef.current > 0 && next >= maxOffsetRef.current) return;
+      }
+      autoFrame = window.requestAnimationFrame(flow);
+    };
+    const startAuto = () => {
+      if (autoFlow && cards.length > 1 && enabled && !reducedMotion && windowActive && autoAllowed && autoFrame === null) {
+        autoTime = null;
+        autoFrame = window.requestAnimationFrame(flow);
+      }
+    };
+    const pauseAuto = () => {
+      if (!autoFlow || reducedMotion) return;
+      autoAllowed = false;
+      stopAuto();
+      window.clearTimeout(idleTimer);
+      idleTimer = window.setTimeout(() => { autoAllowed = true; startAuto(); }, autoFlowIdleMs);
+    };
+    const suspendAuto = () => { windowActive = false; stopAuto(); };
+    const resumeAuto = () => { windowActive = !document.hidden; startAuto(); };
+    const visibilityChanged = () => { if (document.hidden) suspendAuto(); else resumeAuto(); };
 
     const stopTouchMotion = () => {
       returningToStart = false;
@@ -374,6 +417,7 @@ const ContinuousArtworkGallery = ({
     };
 
     returnToStartRef.current = () => {
+      pauseAuto();
       leaveKeyboardMode();
       stopTouchMotion();
       returningToStart = true;
@@ -422,6 +466,7 @@ const ContinuousArtworkGallery = ({
       if (event.ctrlKey) return; // Preserve trackpad pinch zoom.
       const delta = getWheelDelta(event, viewport.clientWidth, viewport.clientHeight);
       if (!delta) return;
+      pauseAuto();
       leaveKeyboardMode();
       event.preventDefault();
       if (mobile || reducedMotion) {
@@ -526,6 +571,7 @@ const ContinuousArtworkGallery = ({
       if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey || event.target.closest?.('input, textarea, select, [contenteditable="true"]') || !cards.length) return;
       event.preventDefault();
       const direction = event.key === 'ArrowRight' ? 1 : -1;
+      pauseAuto();
       stopTouchMotion();
       let index = cards.findIndex(card => card.dataset.artworkId === keyboardIdRef.current);
       if (index === -1) {
@@ -547,6 +593,7 @@ const ContinuousArtworkGallery = ({
     };
 
     const handleTouchStart = event => {
+      pauseAuto();
       touchTravelRef.current = 0;
       leaveKeyboardMode();
       stopTouchMotion();
@@ -581,6 +628,7 @@ const ContinuousArtworkGallery = ({
       }
       lastTouchTime = now;
       if (Math.abs(delta) > 0) {
+        pauseAuto();
         event.preventDefault();
         if (mobile) {
           // Follow the finger directly; no mouse parallax or wheel sensitivity.
@@ -597,6 +645,7 @@ const ContinuousArtworkGallery = ({
     };
 
     const handleTouchEnd = () => {
+      pauseAuto();
       const wasDragging = previousTouchXRef.current !== null;
       previousTouchXRef.current = null;
       if (!mobile || !wasDragging || reducedMotion || performance.now() - lastTouchTime > 100 || Math.abs(touchVelocity) < 0.08) {
@@ -641,6 +690,7 @@ const ContinuousArtworkGallery = ({
     resizeObserver?.observe(viewport);
     resizeObserver?.observe(track);
     cards.forEach(card => resizeObserver?.observe(card));
+    startAuto();
 
     if (enabled) {
       root.addEventListener('wheel', handleWheel, { passive: false });
@@ -655,9 +705,17 @@ const ContinuousArtworkGallery = ({
       viewport.addEventListener('touchcancel', handleTouchCancel, { passive: true });
       window.addEventListener('blur', handleTouchCancel);
       window.addEventListener('resize', handleResize);
+      window.addEventListener('blur', suspendAuto);
+      window.addEventListener('focus', resumeAuto);
+      document.addEventListener('visibilitychange', visibilityChanged);
     }
 
     return () => {
+      stopAuto();
+      window.clearTimeout(idleTimer);
+      window.removeEventListener('blur', suspendAuto);
+      window.removeEventListener('focus', resumeAuto);
+      document.removeEventListener('visibilitychange', visibilityChanged);
       resizeObserver?.disconnect();
       returnToStartRef.current = null;
       root.removeEventListener('wheel', handleWheel);
@@ -684,7 +742,7 @@ const ContinuousArtworkGallery = ({
         pointerFrameRef.current = null;
       }
     };
-  }, [artworks, damping, enabled, mobile, pointerAreaRef, pointerMoveX, pointerMoveY, pointerTiltY, reducedMotion, sensitivity]);
+  }, [artworks, damping, enabled, mobile, pointerAreaRef, pointerMoveX, pointerMoveY, pointerTiltY, reducedMotion, sensitivity, autoFlow, autoFlowSpeed, autoFlowIdleMs]);
 
   useEffect(() => {
     if (!enabled) setHoveredArtworkId(null);

@@ -185,6 +185,9 @@ const IndexPrototype = () => {
             else navigate(to, { state });
           }}
           pointerTiltY={10}
+          autoFlow
+          autoFlowSpeed={64}
+          autoFlowIdleMs={3000}
           pointerAreaRef={pageRef}
           artworks={galleryArtworks}
           enabled={galleryEnabled}

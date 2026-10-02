@@ -60,6 +60,54 @@ const advanceFrames = count => act(() => {
   }
 });
 
+test('automatic flow yields to scrolling and resumes after idle, with blur and cleanup suspension', () => {
+  const { container, unmount } = render(React.cloneElement(gallery(), { autoFlow: true, autoFlowSpeed: 64, autoFlowIdleMs: 3000 }));
+  const track = container.querySelector('[data-artwork-id]').parentElement;
+  const offset = () => -parseFloat(track.style.transform.slice(12));
+  advanceFrames(61);
+  expect(offset()).toBeCloseTo(64);
+  fireEvent.wheel(container.firstChild, { deltaY: -10, deltaMode: 0 });
+  settle();
+  const manualPosition = offset();
+  expect(manualPosition).toBeLessThan(64);
+  act(() => jest.advanceTimersByTime(2999));
+  expect(frames.size).toBe(0);
+  act(() => jest.advanceTimersByTime(1));
+  advanceFrames(61);
+  expect(offset()).toBeCloseTo(manualPosition + 64);
+  fireEvent.blur(window);
+  const blurredPosition = offset();
+  advanceFrames(20);
+  expect(offset()).toBe(blurredPosition);
+  fireEvent.focus(window);
+  advanceFrames(10);
+  expect(offset()).toBeGreaterThan(blurredPosition);
+  unmount();
+  expect(frames.size).toBe(0);
+});
+
+test('automatic flow waits for entry and respects reduced motion', () => {
+  const { rerender } = render(React.cloneElement(gallery(false), { autoFlow: true }));
+  expect(frames.size).toBe(0);
+  rerender(React.cloneElement(gallery(), { autoFlow: true }));
+  expect(frames.size).toBeGreaterThan(0);
+  act(() => {
+    motionQuery.matches = true;
+    motionQuery.addEventListener.mock.calls[0][1]();
+  });
+  expect(frames.size).toBe(0);
+});
+
+test('automatic flow stops at the catalogue end without wrapping', () => {
+  const { container } = render(React.cloneElement(gallery(), { autoFlow: true, autoFlowSpeed: 4000 }));
+  const track = container.querySelector('[data-artwork-id]').parentElement;
+  advanceFrames(61);
+  expect(track.style.transform).toBe('translate3d(-2000px, 0, 0)');
+  expect(frames.size).toBe(0);
+  advanceFrames(20);
+  expect(track.style.transform).toBe('translate3d(-2000px, 0, 0)');
+});
+
 test('keeps projected image hover actions synchronized while the tilted plane moves', () => {
   const originalHitTest = document.elementFromPoint;
   const { container, unmount } = render(gallery(true, undefined, 10));
@@ -520,7 +568,7 @@ test('mobile caption follows the actual image bottom on load and resize', () => 
   expect(root.style.getPropertyValue('--mobile-image-bottom')).toBe('400px');
   const info = screen.getByRole('heading').parentElement;
   expect(getComputedStyle(info).transform).toBe('translateY(-50%)');
-  expect(getComputedStyle(image.parentElement.parentElement).gap).toBe('16vw');
+  expect(getComputedStyle(image.parentElement.parentElement).gap).toBe('20px');
 });
 
 test('mobile intro stays grayscale and mode changes reset desktop parallax', () => {

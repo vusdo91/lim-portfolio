@@ -1,5 +1,23 @@
 # Process Log
 
+## 2026-10-02 - Tighten mobile gallery spacing and increase flow speed
+
+- Set the Home artwork gap to 20px on both desktop and mobile.
+- Increased automatic Home artwork flow speed from 36px/second to 64px/second; the 3-second idle delay is unchanged.
+- Verification: gallery and Home tests passed (2 suites, 29 tests); production build succeeded with existing ESLint and Browserslist warnings; `git diff --check` passed.
+
+## 2026-10-02 - Increase Home flow speed
+
+- User confirmed 36px/second. Updated Home's configured speed and the gallery default from 18 to 36; idle delay remains 3 seconds.
+- Verification: 29 gallery/Home tests passed.
+
+## 2026-10-02 - Home automatic artwork flow
+
+- Confirmed: slowly flow right-to-left after entry, yield to user scrolling in either direction, and resume after an idle interval.
+- Defaults: 18px/second and 3 seconds after the latest wheel/touch/keyboard/return action. Start after the existing entrance enables the gallery; avoid adding automatic movement while manual inertia, touch dragging, or return-to-start is active.
+- Suspend on blur/hidden tab, respect reduced motion, and clean up frames/timers. Retain finite catalogue bounds and stop at the end; looping remains undecided.
+- Verification: 29 gallery/Home tests passed, including automatic speed, manual reversal, idle resume, blur/focus, entry gating, reduced motion, unmount cleanup, and stopping at the end. Production build passed with existing unrelated warnings.
+
 ## 2026-10-02 - Add artwork management table view
 
 - Moved the add action beside the year filters and placed card/table view controls immediately to its left; the full registered artwork count appears above the filters.
