@@ -6,7 +6,7 @@ const shimmer = keyframes`
   to { background-position: -200% 0; }
 `;
 export const ImageSkeleton = styled.div`
-  background: linear-gradient(100deg, #eeeeec 25%, #f7f7f5 45%, #eeeeec 65%);
+  background: linear-gradient(100deg, var(--site-skeleton, #eeeeec) 25%, var(--site-skeleton-shine, #f7f7f5) 45%, var(--site-skeleton, #eeeeec) 65%);
   background-size: 200% 100%;
   animation: ${shimmer} 1.6s ease-in-out infinite;
   @media (prefers-reduced-motion: reduce) { animation: none; }

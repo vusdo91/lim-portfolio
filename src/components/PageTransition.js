@@ -20,8 +20,8 @@ const Curtain = styled.div`
   position: fixed;
   inset: 0;
   z-index: 10000;
-  background: #000;
-  color: #fff;
+  background: var(--site-bg, #fff);
+  color: var(--site-text, #000);
   display: grid;
   place-items: center;
   animation: ${sweep} 1600ms cubic-bezier(.65,0,.35,1) both;
@@ -66,7 +66,7 @@ const FixedHeader = styled.div`
   height: 64px;
   z-index: 10004;
   pointer-events: none;
-  background: rgba(255,255,255,.78);
+  background: var(--site-header, rgba(255,255,255,.78));
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   [data-site-header] { background: transparent; backdrop-filter: none; -webkit-backdrop-filter: none; }

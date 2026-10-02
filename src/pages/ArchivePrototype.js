@@ -15,8 +15,8 @@ const Page = styled.main`
   height: 100dvh;
   overflow-x: hidden;
   overflow-y: auto;
-  background: #fff;
-  color: #111;
+  background: var(--site-bg, #fff);
+  color: var(--site-text, #111);
   font-family: 'Pretendard Variable', Pretendard, sans-serif;
 `;
 const FilterRow = styled.div`
@@ -33,17 +33,17 @@ const YearButton = styled.button`
   min-width: 54px;
   height: 26px;
   padding: 0 11px;
-  border: 1px solid ${props => props.$active ? '#000' : '#50614f'};
+  border: 1px solid ${props => props.$active ? 'var(--site-button, #000)' : 'var(--site-filter-line, #50614f)'};
   border-radius: 999px;
-  background: ${props => props.$active ? '#000' : '#fff'};
-  color: ${props => props.$active ? '#fff' : '#344633'};
+  background: ${props => props.$active ? 'var(--site-button, #000)' : 'var(--site-bg, #fff)'};
+  color: ${props => props.$active ? 'var(--site-button-text, #fff)' : 'var(--site-filter-text, #344633)'};
   display: inline-flex;
   align-items: center;
   justify-content: center;
   font: 400 11px 'Pretendard Variable', sans-serif;
   cursor: pointer;
   transition: background 180ms ease, border-color 180ms ease, color 180ms ease;
-  &:hover, &:focus-visible { border-color: #2050CA; background: ${props => props.$active ? '#2050CA' : '#EAF0FF'}; color: ${props => props.$active ? '#fff' : '#2050CA'}; }
+  &:hover, &:focus-visible { border-color: #2050CA; background: ${props => props.$active ? '#2050CA' : 'var(--site-hover-bg, #EAF0FF)'}; color: ${props => props.$active ? '#fff' : 'var(--site-accent, #2050CA)'}; }
   @media (prefers-reduced-motion: reduce) { transition: none; }
 `;
 const Rail = styled.section`
@@ -76,6 +76,7 @@ const Artwork = styled.article`
   pointer-events: ${props => props.$visible ? 'auto' : 'none'};
   transition: opacity 650ms ease, transform 650ms cubic-bezier(.2,.8,.2,1);
   &:has(a:hover), &:focus-within { transform: translateY(-8px); transition-duration: 220ms; }
+  h2, p { text-align: right; }
   h2 { margin: 8px 0 3px; font-size: 12px; font-weight: 500; line-height: 1.35; }
   p { margin: 0; font-size: 11px; font-weight: 300; line-height: 1.35; }
   a { display: block; width: 100%; cursor: pointer; }
@@ -91,11 +92,11 @@ const BackToTop = styled.button`
   margin: 48px auto 110px;
   border: 0;
   border-radius: 50%;
-  background: #000;
-  color: #fff;
+  background: var(--site-button, #000);
+  color: var(--site-button-text, #fff);
   cursor: pointer;
   transition: transform 220ms ease, background 220ms ease;
-  &:hover, &:focus-visible { transform: translateY(-4px); background: #2050CA; }
+  &:hover, &:focus-visible { transform: translateY(-4px); background: #2050CA; color: #fff; }
   svg { width: 17px; height: 17px; }
   @media (prefers-reduced-motion: reduce) { transition: none; }
 `;

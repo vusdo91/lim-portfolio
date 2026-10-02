@@ -13,7 +13,8 @@ import SkeletonImage, { ImageSkeleton } from '../components/SkeletonImage';
 
 const AboutContainer = styled.div`
   min-height: calc(100vh - 112px);
-  background: white;
+  background: var(--site-bg, #fff);
+  color: var(--site-text, #111);
   font-family: 'Pretendard Variable', Pretendard, sans-serif;
   padding: 4rem 2rem;
   display: flex;
@@ -60,12 +61,12 @@ const FeaturedArtwork = styled.figure`
   img { display: block; width: auto; max-width: 100%; max-height: min(65vh, 560px); margin: 0 auto; object-fit: contain; }
   figcaption { margin-top: 12px; text-align: right; }
   strong { display: block; font-size: 13px; font-weight: 500; }
-  span { display: block; margin-top: 3px; font-size: 12px; font-weight: 300; color: #505050; }
+  span { display: block; margin-top: 3px; font-size: 12px; font-weight: 300; color: var(--site-muted, #505050); }
   @media (max-width: 768px) { margin-bottom: 36px; }
 `;
 const IntroductionTitle = styled.h1`
   margin: 0 0 20px;
-  color: #1a1a1a;
+  color: var(--site-text, #1a1a1a);
   font-size: 18px;
   font-weight: 600;
   line-height: 1.45;
@@ -74,7 +75,7 @@ const IntroductionTitle = styled.h1`
 const Biography = styled.div`
   line-height: 1.7;
   font-size: 1rem;
-  color: #505050;
+  color: var(--site-muted, #505050);
   margin-bottom: 0;
   text-align: justify;
   white-space: pre-line;
@@ -93,7 +94,7 @@ const BiographyParagraph = styled.p`
 const SectionTitle = styled.h2`
   font-size: 1.25rem;
   font-weight: 600;
-  color: #1a1a1a;
+  color: var(--site-text, #1a1a1a);
   margin-bottom: 2.5rem;
   
   @media (max-width: 768px) {
@@ -125,7 +126,7 @@ const ExhibitionYearGroup = styled.div`
 
 const ExhibitionYear = styled.div`
   font-weight: light;
-  color: #b8b8b8;
+  color: var(--site-subtle, #b8b8b8);
   font-size: 1rem;
   min-width: 4rem;
   margin-right: 2rem;
@@ -142,7 +143,7 @@ const ExhibitionListContainer = styled.div`
   h3 {
     font-size: 1rem;
     font-weight: 500;
-    color: #333;
+    color: var(--site-text, #333);
     margin-bottom: 1rem;
   }
 `;
@@ -153,7 +154,7 @@ const ExhibitionContent = styled.div`
   .exhibition-item {
     margin-bottom: 0.75rem;
     font-size: 1rem;
-    color: #505050;
+    color: var(--site-muted, #505050);
     line-height: 1.5;
     
     &:last-child {
@@ -170,7 +171,7 @@ const ExhibitionContent = styled.div`
 const SectionDivider = styled.div`
   width: 100%;
   height: 1px;
-  background-color: #e0e0e0;
+  background-color: var(--site-line, #e0e0e0);
   margin: 4rem 0;
 `;
 
@@ -189,7 +190,7 @@ const ExhibitionItem = styled.div`
   
   .year {
     min-width: 4rem;
-    color: #b8b8b8;
+    color: var(--site-subtle, #b8b8b8);
     font-size: 1rem;
     font-weight: 300;
     margin-right: 2rem;
@@ -197,7 +198,7 @@ const ExhibitionItem = styled.div`
   
   .content {
     flex: 1;
-    color: #505050;
+    color: var(--site-muted, #505050);
     font-size: 1rem;
     line-height: 1.5;
   }
@@ -403,7 +404,7 @@ const About = () => {
                     </ExhibitionYearGroup>
                   ))
                 ) : (
-                  <div data-about-reveal style={{ color: '#666', fontStyle: 'italic' }}>
+                  <div data-about-reveal style={{ color: 'var(--site-muted, #666)', fontStyle: 'italic' }}>
                     {language === 'ko' ? '개인전 기록이 없습니다.' : 'No solo exhibitions recorded.'}
                   </div>
                 )}
@@ -429,7 +430,7 @@ const About = () => {
                     </ExhibitionYearGroup>
                   ))
                 ) : (
-                  <div data-about-reveal style={{ color: '#666', fontStyle: 'italic' }}>
+                  <div data-about-reveal style={{ color: 'var(--site-muted, #666)', fontStyle: 'italic' }}>
                     {language === 'ko' ? '그룹전 기록이 없습니다.' : 'No group exhibitions recorded.'}
                   </div>
                 )}

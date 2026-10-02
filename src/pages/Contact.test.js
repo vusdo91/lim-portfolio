@@ -8,7 +8,7 @@ test('contact copies the email and provides tooltips for both icons', async () =
   Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText } });
   try {
   render(<Contact />);
-  expect(screen.getByRole('heading', { level: 1, name: 'Always happy to connect.' })).toBeTruthy();
+  expect(screen.queryByText('Always happy to connect.')).toBeNull();
   const email = screen.getByRole('button', { name: '메일주소 복사' });
   expect(email.getAttribute('href')).toBeNull();
   expect(email.getAttribute('aria-describedby')).toBe('contact-email-tooltip');

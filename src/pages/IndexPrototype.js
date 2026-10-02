@@ -19,8 +19,8 @@ const PrototypePage = styled.main`
   height: 100vh;
   height: 100dvh;
   overflow: hidden;
-  background: #fbfaf8;
-  color: #262522;
+  background: var(--site-bg, #fff);
+  color: var(--site-text, #262522);
   font-family: 'Pretendard Variable', Pretendard, sans-serif;
 `;
 
@@ -50,7 +50,7 @@ const HomeCopyright = styled.footer`
   width: max-content;
   max-width: 90vw;
   transform: translateX(-50%);
-  color: #777;
+  color: var(--site-subtle, #777);
   font: 300 12px/1.4 'Pretendard Variable', Pretendard, sans-serif;
   text-align: center;
   pointer-events: none;
@@ -184,7 +184,7 @@ const IndexPrototype = () => {
             if (detailGo) detailGo(to, artwork.title, state, [artwork.size, artwork.material, artwork.year].filter(Boolean).join(', '));
             else navigate(to, { state });
           }}
-          pointerTiltY={10}
+          showArtworkInfo={false}
           autoFlow
           autoFlowSpeed={64}
           autoFlowIdleMs={3000}

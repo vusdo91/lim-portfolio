@@ -3,32 +3,23 @@ import styled from 'styled-components';
 import { MailIcon, InstagramIcon } from '../components/icons/SVGIcons';
 
 const ContactContainer = styled.div`
-  min-height: calc(100vh - 64px);
-  background: white;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--site-bg, #fff);
+  color: var(--site-text, #111);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 4rem 2rem;
   
-  @media (max-width: 768px) {
-    min-height: calc(100vh - 105px);
-  }
+
 `;
 
 const ContactInfo = styled.div`
   display: flex;
   gap: 28px;
   align-items: center;
-`;
-const Signature = styled.h1`
-  margin: 0 0 34px;
-  color: #111;
-  font-family: 'Pretendard Variable', Pretendard, sans-serif;
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 1.3;
-  text-align: center;
 `;
 
 const ContactItem = styled.a`
@@ -38,7 +29,7 @@ const ContactItem = styled.a`
   justify-content: center;
   width: 52px;
   height: 52px;
-  color: #111;
+  color: var(--site-text, #111);
   text-decoration: none;
   padding: 0;
   border: 0;
@@ -132,7 +123,6 @@ const Contact = () => {
   };
   return (
     <ContactContainer>
-      <Signature>Always happy to connect.</Signature>
       <ContactInfo>
         <ContactItem as="button" type="button" onClick={copyEmail} aria-label="메일주소 복사" aria-describedby="contact-email-tooltip">
           <MailIcon className="contact-icon" aria-hidden="true" />

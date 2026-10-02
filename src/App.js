@@ -5,6 +5,7 @@ import { LanguageProvider } from './contexts/LanguageContext';
 import { FirebaseAuthProvider } from './contexts/FirebaseAuthContext';
 import { ArtworkProvider } from './contexts/ArtworkContext';
 import { ProfileProvider } from './contexts/ProfileContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 import SiteHeader from './components/SiteHeader';
 import { PageTransitionProvider } from './components/PageTransition';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -99,6 +100,11 @@ const MainContent = styled.main`
   }
 `;
 
+const ContactMainContent = styled(MainContent)`
+  padding-top: 0;
+  @media (max-width: 768px) { padding-top: 0; }
+`;
+
 const ContentWrapper = styled.div`
   min-height: 100%;
   display: flex;
@@ -125,6 +131,7 @@ function App() {
         <ProfileProvider>
           <LanguageProvider>
             <Router>
+              <ThemeProvider>
               <GlobalStyle />
               <VisitorTracker />
               <PageTransitionProvider>
@@ -150,14 +157,14 @@ function App() {
             } />
             <Route path="/contact" element={
               <AppContainer>
-                <MainContent>
+                <ContactMainContent>
                   <SiteHeader />
                   <ContentWrapper>
                     <PageContent>
                       <Contact />
                     </PageContent>
                   </ContentWrapper>
-                </MainContent>
+                </ContactMainContent>
               </AppContainer>
             } />
             
@@ -235,6 +242,7 @@ function App() {
             } />
           </Routes>
           </PageTransitionProvider>
+        </ThemeProvider>
         </Router>
       </LanguageProvider>
     </ProfileProvider>

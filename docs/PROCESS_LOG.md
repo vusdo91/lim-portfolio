@@ -1,5 +1,38 @@
 # Process Log
 
+## 2026-10-02 - Mobile color and header controls
+
+- Keep all mobile Home artworks in color and full opacity during intro and exploration.
+- Move language/theme controls into the mobile header beside the hamburger; remove duplicate controls from the menu and adapt the logo width for narrow screens.
+- Verification: gallery, header, and theme suites passed (31 tests). Actual-device layout review remains pending.
+
+
+## 2026-10-02 - Public site dark mode
+
+- Added a shared theme context and CSS palette variables for public pages, transition overlays, mobile navigation, logo, buttons, and skeletons.
+- Added moon/sun controls beside the language toggle in desktop headers and mobile menus, with localized accessible labels and pressed state.
+- Default to light; persist explicit selection and synchronize changes between tabs. Storage failures do not prevent switching. Admin routes keep a light palette.
+- Verification: existing 20 suites / 80 tests passed; 3 new theme tests verify button placement, page/reload persistence, mobile synchronization, cross-tab updates, and unavailable storage. Production build passed with existing warnings. Actual-device visual review remains pending.
+
+
+## 2026-10-02 - White Home background
+
+- Changed the Home page background from #fbfaf8 to #fff.
+
+
+## 2026-10-02 - Center Contact icons
+
+- Removed the introduction text and centered the remaining icons in the full dynamic viewport. Removed Contact-only inherited top padding from the app layout.
+- Preserved email copying, toast feedback, Instagram navigation, and tooltips.
+
+
+## 2026-10-02 - Home and mobile artwork layout refinements
+
+- Confirmed: hide Home captions, remove Home pointer rotation while preserving XY motion, use white/black GNB transitions, halve mobile automatic flow to 32px/second, right-align Works captions, and fix mobile detail controls at the bottom with viewport-centered artwork images.
+- Preserve existing mobile breakpoint (600px), safe-area spacing, image transitions, and desktop detail layout.
+- Verification: all 20 existing suites / 79 tests passed; gallery suite passed 27 tests including a new mobile half-speed and hidden-caption regression. Production build succeeded with existing ESLint/Browserslist warnings. Actual-device visual review remains pending.
+
+
 ## 2026-10-02 - Tighten mobile gallery spacing and increase flow speed
 
 - Set the Home artwork gap to 20px on both desktop and mobile.

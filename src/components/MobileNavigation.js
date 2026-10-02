@@ -3,8 +3,6 @@ import { createPortal } from 'react-dom';
 import styled from 'styled-components';
 import { useLocation } from 'react-router-dom';
 import { TransitionLink } from './PageTransition';
-import LanguageToggle from './LanguageToggle';
-
 const Toggle = styled.button`
   display: none;
   position: absolute;
@@ -45,7 +43,8 @@ const Panel = styled.nav`
   justify-content: space-between;
   padding: ${props => props.$top} 4vw 34px;
   box-sizing: border-box;
-  background: #fff;
+  background: var(--site-bg, #fff);
+  color: var(--site-text, #111);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   opacity: ${props => props.$open ? 1 : 0};
@@ -67,16 +66,6 @@ const MenuLinks = styled.div`
   display: flex;
   flex-direction: column;
 `;
-const MenuLanguage = styled.div`
-  && button {
-    grid-column: auto;
-    grid-row: auto;
-    justify-self: start;
-    padding: 5px 0;
-    font-size: 14px;
-  }
-`;
-
 export default function MobileNavigation({ top = '105px' }) {
   const location = useLocation();
   const [open, setOpen] = useState(false);
@@ -96,7 +85,6 @@ export default function MobileNavigation({ top = '105px' }) {
       <TransitionLink to="/about" aria-current={location.pathname === '/about' ? 'page' : undefined} onClick={close}>About</TransitionLink>
       <TransitionLink to="/contact" aria-current={location.pathname === '/contact' ? 'page' : undefined} onClick={close}>Contact</TransitionLink>
     </MenuLinks>
-    <MenuLanguage><LanguageToggle /></MenuLanguage>
   </Panel>;
   return <>
     <Toggle type="button" aria-label={open ? '메뉴 닫기' : '메뉴 열기'} aria-expanded={open} onClick={() => setOpen(value => !value)}>

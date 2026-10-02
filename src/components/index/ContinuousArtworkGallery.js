@@ -56,8 +56,8 @@ const BackButton = styled.button`
   padding: 0;
   border: 0;
   border-radius: 999px;
-  background: #000;
-  color: #fff;
+  background: var(--site-button, #000);
+  color: var(--site-button-text, #fff);
   display: flex;
   align-items: center;
   overflow: hidden;
@@ -75,7 +75,7 @@ const BackButton = styled.button`
     opacity: 0;
     transition: opacity 180ms ease;
   }
-  &:hover, &:focus-visible { width: 150px; background: #083e2c; }
+  &:hover, &:focus-visible { width: 150px; background: #083e2c; color: #fff; }
   &:hover span, &:focus-visible span { opacity: 1; }
   &:focus-visible { outline: 2px solid #083e2c; outline-offset: 4px; }
   @media (prefers-reduced-motion: reduce) { transition: none; span { transition: none; } }
@@ -139,7 +139,7 @@ const ImageFallback = styled.div`
   height: min(44.8vh, 448px);
   display: grid;
   place-items: center;
-  background: #f0efec;
+  background: var(--site-skeleton, #f0efec);
   color: #76736e;
   font-size: 0.7rem;
   letter-spacing: 0.1em;
@@ -222,6 +222,7 @@ const ContinuousArtworkGallery = ({
   pointerMoveY,
   pointerTiltY = 0,
   onArtworkOpen,
+  showArtworkInfo = true,
   autoFlow = false,
   autoFlowSpeed = 64,
   autoFlowIdleMs = 3000
@@ -310,7 +311,7 @@ const ContinuousArtworkGallery = ({
       autoTime = timestamp;
       if (animationFrameRef.current === null && previousTouchXRef.current === null && !returningToStart) {
         leaveKeyboardMode();
-        const next = getNextGalleryOffset(currentOffsetRef.current, elapsed * autoFlowSpeed / 1000, maxOffsetRef.current);
+        const next = getNextGalleryOffset(currentOffsetRef.current, elapsed * autoFlowSpeed * (mobile ? 0.5 : 1) / 1000, maxOffsetRef.current);
         targetOffsetRef.current = next;
         renderOffset(next);
         if (maxOffsetRef.current > 0 && next >= maxOffsetRef.current) return;
@@ -846,7 +847,7 @@ const ContinuousArtworkGallery = ({
                 draggable="false"
                 data-hover-artwork-id={artwork.id}
                 $hovered={!mobile && enabled && selectedArtworkId === artwork.id}
-                $color={mobile ? enabled && selectedArtworkId === artwork.id : !enabled || !selectedArtworkId || selectedArtworkId === artwork.id}
+                $color={mobile || !enabled || !selectedArtworkId || selectedArtworkId === artwork.id}
                 onPointerEnter={event => {
                   if (!mobile && enabled && event.pointerType !== 'touch') setHoveredArtworkId(artwork.id);
                 }}
@@ -866,7 +867,7 @@ const ContinuousArtworkGallery = ({
         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 4L7 12l8 8" stroke="currentColor" strokeWidth="2.5" /></svg>
         <span aria-hidden="true">TO START</span>
       </BackButton>
-      {mobile ? (
+      {showArtworkInfo && (mobile ? (
         <MobileArtworkInfo ref={captionElementRef} aria-live="polite" aria-atomic="true" data-phase={caption?.exiting ? 'exiting' : 'entering'}>
           {caption && [ ['h2', caption.artwork.title], ['p', String(caption.artwork.year ?? '')] ].map(([Tag, value]) => (
             <Tag key={`${caption.version}-${Tag}`} aria-label={value}>
@@ -888,7 +889,7 @@ const ContinuousArtworkGallery = ({
               ))}
             </ArtworkName>
         )}
-      </ArtworkInfo>}
+      </ArtworkInfo>)}
     </GalleryRoot>
   );
 };

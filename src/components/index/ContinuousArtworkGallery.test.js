@@ -424,7 +424,7 @@ test('mobile uses the central artwork with stacked information and bidirectional
   expect(screen.getByLabelText('2024')).toBeTruthy();
   expect(getComputedStyle(screen.getByRole('heading').parentElement).flexDirection).toBe('column');
   expect(getComputedStyle(first).filter).toBe('grayscale(0)');
-  expect(getComputedStyle(second).filter).toBe('grayscale(1)');
+  expect(getComputedStyle(second).filter).toBe('grayscale(0)');
   expect(getComputedStyle(viewport).pointerEvents).toBe('auto');
   settle();
   fireEvent.pointerOver(second);
@@ -438,7 +438,7 @@ test('mobile uses the central artwork with stacked information and bidirectional
   fireEvent.touchStart(viewport, { changedTouches: [{ clientX: 700 }] });
   fireEvent.touchMove(viewport, { changedTouches: [{ clientX: 550 }] });
   expect(screen.getByRole('heading').textContent).toBe('Second artwork');
-  expect(getComputedStyle(first).filter).toBe('grayscale(1)');
+  expect(getComputedStyle(first).filter).toBe('grayscale(0)');
   fireEvent.touchMove(viewport, { changedTouches: [{ clientX: 350 }] });
   expect(screen.getByRole('heading').textContent).toBe('Second artwork');
   expect(screen.getByLabelText('2025')).toBeTruthy();
@@ -571,11 +571,11 @@ test('mobile caption follows the actual image bottom on load and resize', () => 
   expect(getComputedStyle(image.parentElement.parentElement).gap).toBe('20px');
 });
 
-test('mobile intro stays grayscale and mode changes reset desktop parallax', () => {
+test('mobile artwork stays in color during intro and mode changes reset desktop parallax', () => {
   mobileQuery.matches = true;
   const { rerender, container } = render(gallery(false, undefined, 10));
   const first = screen.getByAltText('First artwork');
-  expect(getComputedStyle(first).filter).toBe('grayscale(1)');
+  expect(getComputedStyle(first).filter).toBe('grayscale(0)');
   expect(screen.queryByRole('heading')).toBeNull();
   fireEvent.touchStart(screen.getByLabelText('Artwork gallery'), { changedTouches: [{ clientX: 700 }] });
   fireEvent.touchMove(screen.getByLabelText('Artwork gallery'), { changedTouches: [{ clientX: 350 }] });
@@ -672,4 +672,13 @@ test('holding before release, cancelled gestures, and reduced motion do not laun
   drag();
   fireEvent.touchEnd(viewport);
   expect(frames.size).toBe(0);
+});
+
+test('mobile automatic flow runs at half the desktop speed without a caption when hidden', () => {
+  mobileQuery.matches = true;
+  const { container } = render(React.cloneElement(gallery(), { autoFlow: true, autoFlowSpeed: 64, showArtworkInfo: false }));
+  const track = container.querySelector('[data-artwork-id]').parentElement;
+  advanceFrames(61);
+  expect(-parseFloat(track.style.transform.slice(12))).toBeCloseTo(32);
+  expect(container.querySelector('[aria-live]')).toBeNull();
 });

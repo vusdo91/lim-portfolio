@@ -13,8 +13,8 @@ const Page = styled.main`
   height: 100vh;
   height: 100dvh;
   overflow-y: auto;
-  background: #fff;
-  color: #111;
+  background: var(--site-bg, #fff);
+  color: var(--site-text, #111);
   font-family: 'Pretendard Variable', Pretendard, sans-serif;
 `;
 const Back = styled.button`
@@ -26,7 +26,7 @@ const Back = styled.button`
   padding: 0;
   border: 0;
   background: transparent;
-  color: #111;
+  color: var(--site-text, #111);
   cursor: pointer;
   transition: transform 220ms ease;
   svg { width: 20px; height: 20px; }
@@ -64,7 +64,11 @@ const Artwork = styled.article`
   flex-direction: column;
   align-items: center;
   padding: min(13vh, 96px) 5vw 64px;
-  @media (max-width: 600px) { padding-top: 120px; }
+  @media (max-width: 600px) {
+    min-height: 100dvh;
+    padding: 0 5vw;
+    justify-content: center;
+  }
 `;
 const ArtworkProgress = styled.div`
   width: 152px;
@@ -72,8 +76,12 @@ const ArtworkProgress = styled.div`
   margin-bottom: 36px;
   overflow: hidden;
   border-radius: 999px;
-  background: #e4e7ed;
-  @media (max-width: 600px) { margin-bottom: 36px; }
+  background: var(--site-line, #e4e7ed);
+  @media (max-width: 600px) {
+    position: absolute;
+    top: 157px;
+    margin-bottom: 0;
+  }
 `;
 const ProgressFill = styled.div`
   width: ${props => props.$percent}%;
@@ -99,7 +107,9 @@ const SlideImage = styled.img`
   height: auto;
   object-fit: contain;
   ${props => props.$phase && css`animation: ${props.$phase === 'out' ? props.$direction === 'previous' ? imageLeavesRight : imageLeavesLeft : props.$direction === 'previous' ? imageEntersLeft : imageEntersRight} ${DETAIL_SLIDE_MS}ms cubic-bezier(.65,0,.35,1) both;`}
-  @media (max-width: 600px) { max-height: 56vh; }
+  @media (max-width: 600px) {
+    max-height: max(80px, min(56dvh, calc(100dvh - 360px)));
+  }
   @media (prefers-reduced-motion: reduce) { animation: none; }
 `;
 const DetailControls = styled.div`
@@ -109,6 +119,16 @@ const DetailControls = styled.div`
   grid-template-columns: 32px minmax(0, 1fr) 32px;
   align-items: center;
   @media (max-width: 900px) { width: calc(100vw - 112px); }
+  @media (max-width: 600px) {
+    position: fixed;
+    z-index: 2;
+    left: 50%;
+    bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+    transform: translateX(-50%);
+    margin-top: 0;
+    padding: 12px 0;
+    background: var(--site-bg, #fff);
+  }
 `;
 const ChangeArtwork = styled.button`
   grid-column: ${props => props.$direction === 'previous' ? 1 : 3};
@@ -121,7 +141,7 @@ const ChangeArtwork = styled.button`
   padding: 0;
   border: 0;
   background: transparent;
-  color: #111;
+  color: var(--site-text, #111);
   cursor: pointer;
   visibility: ${props => props.$hidden ? 'hidden' : 'visible'};
   transition: transform 220ms ease;

@@ -1,3 +1,28 @@
+2026-10-02 Mobile gallery color and header controls (supersedes earlier mobile rules)
+- Confirmed: mobile Home artwork images always remain in color, including intro and scrolling; central selection no longer changes grayscale or opacity.
+- Confirmed: move language and theme toggles out of the mobile menu into the header, immediately left of the hamburger button. Retain the desktop control group.
+- Implementation default: reserve 42px for the hamburger and scale the logo width on narrow screens to avoid overlap.
+
+2026-10-02 Public site dark mode
+- Confirmed: introduce dark mode with its button beside the Korean/English toggle. Desktop uses the header control group; mobile uses the menu control group.
+- Applies to Home, Works, artwork details, About, Contact, shared navigation, page transitions, logo, controls, and loading placeholders. Artwork image pixels are unchanged by theme switching.
+- Implementation defaults: light mode on first visit, dark background #141414, primary text #eeeeee, localStorage persistence under lim-portfolio-theme, and storage-event synchronization between tabs. Admin routes retain their light palette.
+- Verification: existing 80 tests passed, 3 new theme tests passed, production build succeeded with existing warnings. Actual-device visual review remains a follow-up.
+
+2026-10-02 Home background
+- Confirmed: Home page background is pure white (#fff).
+
+2026-10-02 Contact layout update
+- Confirmed: remove Always happy to connect. Center the remaining email and Instagram icons on both viewport axes on desktop and mobile. Preserve copy feedback and tooltips.
+
+2026-10-02 Home / GNB / Works / mobile detail refinements
+- Confirmed: hide Home artwork title/year captions; remove pointer rotation and retain XY movement.
+- Confirmed: use a white background and black text for light-mode GNB transitions.
+- Confirmed: mobile automatic Home flow is 32px/second, desktop is 64px/second; retain idle-resume behavior.
+- Confirmed: right-align Works artwork titles and information.
+- Confirmed: fix mobile detail information and previous/next controls at the bottom; center artwork images on both viewport axes.
+- Implementation defaults: existing 600px detail breakpoint, 24px bottom spacing plus safe-area, and constrained image height. Actual-device visual review remains pending.
+
 Index 페이지 인터랙션 기획 — 개정안
 개정일: 2026-09-30
 
