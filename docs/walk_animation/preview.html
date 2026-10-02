@@ -1,0 +1,19 @@
+<!doctype html><html lang="ko"><meta charset="utf-8"><title>Silhouette WebM test</title><style>
+body{margin:0;background:#f4f4f1;color:#222;font:15px system-ui;display:grid;place-items:center;min-height:100vh}main{max-width:880px;padding:24px}h1{font-size:24px}.stage{height:520px;display:grid;place-items:center;background:repeating-conic-gradient(#dbe5ea 0% 25%,#f4f7f8 0% 50%) 0/40px 40px;border:1px solid #ccc;border-radius:12px}canvas{height:100%;max-width:100%;object-fit:contain}button{padding:12px 18px;margin:12px 5px 8px 0;cursor:pointer}p{line-height:1.65}#status{font-weight:700}video{display:none}</style>
+<main><h1>투명 WebM · 동작 연결 테스트</h1><p>걷기 중 ‘멈춤’을 누르면 현재 반복을 완료하고 돌아봅니다. 정지 후 ‘걷기’를 누르면 몸을 돌려 다시 걷습니다.</p><div class="stage"><canvas id="c" width="480" height="640"></canvas></div><button id="start">시작 / 걷기</button><button id="stop">멈춤 · 돌아보기</button><button id="demo">자동 연결 테스트</button><span id="status">준비 중</span><p>체크무늬가 보이는 부분은 투명 배경입니다. 파일 3개를 이 HTML과 같은 폴더에 두세요. 이 페이지는 리소스 확인용이며, 실제 작품 전환과의 동기화는 React에서 조정합니다.</p></main>
+<script>
+const names=['walk','stop_and_turn','turn_and_walk'];const V={};const ctx=c.getContext('2d');let current=null,wanted='walk',auto=false,loops=0,ready=false,idleTimer;
+const label=document.getElementById('status');
+function paint(v){ctx.clearRect(0,0,480,640);ctx.drawImage(v,0,0,480,640)}
+async function play(n){clearTimeout(idleTimer);if(current)V[current].pause();current=n;label.textContent=n;const v=V[n];v.currentTime=0;try{await v.play()}catch(e){label.textContent=e.message}}
+function frames(n){const v=V[n];v.requestVideoFrameCallback(()=>{if(current===n)paint(v);frames(n)})}
+Promise.all(names.map(n=>new Promise((resolve,reject)=>{const v=document.createElement('video');V[n]=v;v.muted=true;v.playsInline=true;v.preload='auto';v.src=n+'.webm';document.body.append(v);v.onloadeddata=resolve;v.onerror=()=>reject(new Error(n+' 로드 실패'));v.onended=()=>{
+ if(current!==n)return;
+ if(n==='walk'){loops++;if(auto&&loops>=3)wanted='idle';play(wanted==='idle'?'stop_and_turn':'walk')}
+ else if(n==='stop_and_turn'){label.textContent='idle · 마지막 프레임 유지';if(auto)idleTimer=setTimeout(()=>{wanted='walk';play('turn_and_walk')},1000);else if(wanted==='walk')play('turn_and_walk')}
+ else {loops=0;play(wanted==='idle'?'stop_and_turn':'walk')}
+};frames(n);v.load()}))).then(()=>{ready=true;label.textContent='준비 완료 · 시작 버튼';paint(V.walk)}).catch(e=>label.textContent=e.message);
+document.getElementById('start').onclick=()=>{if(!ready)return;auto=false;wanted='walk';if(!current)play('walk');else if(current==='stop_and_turn'&&V[current].ended)play('turn_and_walk')};
+document.getElementById('stop').onclick=()=>{auto=false;clearTimeout(idleTimer);wanted='idle'};
+document.getElementById('demo').onclick=()=>{if(!ready)return;auto=true;wanted='walk';loops=0;play('walk')};
+</script></html>

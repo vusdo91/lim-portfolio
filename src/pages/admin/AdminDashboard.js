@@ -3,27 +3,13 @@ import styled from 'styled-components';
 import { useFirebaseAuth } from '../../contexts/FirebaseAuthContext';
 import { useArtworks } from '../../contexts/ArtworkContext';
 import { useProfile } from '../../contexts/ProfileContext';
+import AdminPageHeader from './AdminPageHeader';
 
 const DashboardContainer = styled.div`
   min-height: 100vh;
   background: #f5f5f5;
   overflow-y: auto;
   height: 100vh;
-`;
-
-const Header = styled.header`
-  background: white;
-  padding: 1rem 2rem;
-  border-bottom: 1px solid #eee;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const Title = styled.h1`
-  color: #333;
-  margin: 0;
-  font-size: 1.5rem;
 `;
 
 const LogoutButton = styled.button`
@@ -168,12 +154,10 @@ const AdminDashboard = () => {
 
   return (
     <DashboardContainer>
-      <Header>
-        <Title>관리자 대시보드</Title>
-        <LogoutButton onClick={handleLogout}>
-          로그아웃
-        </LogoutButton>
-      </Header>
+      <AdminPageHeader
+        title="관리자 대시보드"
+        actions={<LogoutButton onClick={handleLogout}>로그아웃</LogoutButton>}
+      />
       
       <Content>
         <WelcomeCard>
@@ -241,6 +225,13 @@ const AdminDashboard = () => {
             <MenuTitle>프로필 관리</MenuTitle>
             <MenuDescription>
               작가 소개문 및 전시 목록 관리
+            </MenuDescription>
+          </MenuCard>
+
+          <MenuCard onClick={() => window.location.href = '/admin/home'}>
+            <MenuTitle>홈 관리</MenuTitle>
+            <MenuDescription>
+              홈 화면 전시 정보 및 표시 작품 관리
             </MenuDescription>
           </MenuCard>
         </MenuGrid>

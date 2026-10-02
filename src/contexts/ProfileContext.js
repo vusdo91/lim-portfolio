@@ -9,6 +9,8 @@ import {
 } from 'firebase/firestore';
 import { db } from '../firebase/config';
 import { translations } from '../utils/translations';
+import { DEFAULT_HOME_SETTINGS } from '../utils/homeSettings';
+import { DEFAULT_AWARD_ITEMS } from '../utils/profileDefaults';
 
 const ProfileContext = createContext();
 
@@ -24,6 +26,13 @@ export const ProfileProvider = ({ children }) => {
   const [profile, setProfile] = useState({
     biography: '',
     biography_en: '',
+    biographyTitle: '',
+    biographyTitle_en: '',
+    aboutArtworkId: '',
+    homeExhibitionTitle: DEFAULT_HOME_SETTINGS.exhibitionTitle,
+    homeExhibitionDate: DEFAULT_HOME_SETTINGS.exhibitionDate,
+    homeGalleryName: DEFAULT_HOME_SETTINGS.galleryName,
+    awardItems: DEFAULT_AWARD_ITEMS,
     exhibitions: []
   });
   const [isLoading, setIsLoading] = useState(true);
@@ -31,6 +40,13 @@ export const ProfileProvider = ({ children }) => {
 
   // 기본 프로필 데이터
   const getDefaultProfile = () => ({
+    biographyTitle: '',
+    biographyTitle_en: '',
+    aboutArtworkId: '',
+    homeExhibitionTitle: DEFAULT_HOME_SETTINGS.exhibitionTitle,
+    homeExhibitionDate: DEFAULT_HOME_SETTINGS.exhibitionDate,
+    homeGalleryName: DEFAULT_HOME_SETTINGS.galleryName,
+    awardItems: DEFAULT_AWARD_ITEMS,
     biography: `한 신문기자의 칼럼을 읽었다. 그 내용은,중동지역을 여행하던 중 문득 젊은 시절에 감영 깊게 읽은 한 소설이 떠올라 어느 상점에 들러 양탄자를 구매한 일에 대한 감상이었다. 그는 구매한 양탄자를 집으로 가져와바닥에 두는 대신 벽에 걸어 장식했다. 작업을 하면서 한동안 나는 어떤 그림을 그려야 할지 몰라 어려움을 겪었다. 어떤 그림은 쉽게 그려지기도했지만, 어떤 그림은 그렇지 않았다.버려지는 캔버스 천과 물감을 보며 원인이 무엇인지 파악하려고 애썼지만, 그저 막막할 뿐이었다.그러던 중 최근 자신을 깊이 들여다볼 기회가 있었다. 몇 가지 크고 작은 일들이 계기가 되어 상황을 그렇게 만들었다. 무심코 지나친 과거의 기억을 되짚어보고,사진첩을 훑으며 이전과는 다른관점으로,마음에 와닿 는 이미지를 선별해보았다.기자에게 감명을 준 소설도 읽어보았다. 소설에서 양탄자는 주인공이 어느 나이 든 시인에게 인생이 무엇이냐고 물었을 때 대답 대신 받은 선물이었다. 주인공은 여러 인생의 굴레를 경험한 후에 양탄자의 의미를 깨닫는다. 양탄자는 인생의 무목적성을 긍정한다. 직조공이 양탄자를 짜면서 자신의 심미감을 충족시키려는 목적 외 다른 목적을 갖지 않았듯이, 살아가면서 마주하게 되는 온갖 일들에 하나하나 집착하기보다, 나름의 무늬가 완성되어 가고 있음을 인정하면 된다는 것이다. 소설의 내용을 되뇌어 보며, 마음이 한결 편해짐을 느꼈다. 직조공이 양탄자를 짜듯이, 기자가 그것을 바닥에두지 않고 벽에 장식했듯이 나도 캔버스 프레임 없이 천을 벽에 고정하고, 양탄자의 날실을 연상하며 기름기없는 짧은 붓 터치로 천의 표면을 더듬었다. 이러한 작업 방식이 자연스럽게 느껴졌다. 서걱거리는 붓질의느낌에 집중하다 보니 어느새 그림은 나름의 무늬를 띄기 시작했다.`,
     biography_en: `I read a newspaper columnist's article. The content was about his impressions of buying a carpet at a shop while traveling in the Middle East, when a novel he had read deeply in his youth came to mind. When he brought the purchased carpet home, instead of placing it on the floor, he hung it on the wall as decoration. While working, for a while I struggled with not knowing what kind of picture to draw. Some paintings were easily drawn, but others were not. Looking at discarded canvas cloth and paint, I tried to figure out what the cause was, but I was just frustrated. Then recently, I had an opportunity to look deeply into myself. Several large and small events created this situation. I reflected on past memories that I had carelessly passed by, and while flipping through photo albums, I selected images that touched my heart from a different perspective than before. I also read the novel that impressed the journalist. In the novel, the carpet was a gift the protagonist received instead of an answer when he asked an aged poet what life was. The protagonist realizes the meaning of the carpet after experiencing various life struggles. The carpet affirms life's purposelessness. Just as the weaver had no purpose other than to satisfy his aesthetic sense while weaving the carpet, rather than obsessing over each of the various things encountered in life, one should acknowledge that one's own pattern is being completed. Reflecting on the novel's content, I felt my heart become much more at ease. Like a weaver weaving a carpet, like the journalist who decorated it on the wall instead of placing it on the floor, I too fixed cloth to the wall without a canvas frame, and reminiscing about the warp threads of a carpet, I felt the surface of the cloth with short brush strokes without oil. This way of working felt natural. As I concentrated on the feeling of the scraping brushstrokes, before I knew it, the painting began to take on its own pattern.`,
     exhibitions: [
@@ -109,12 +125,15 @@ export const ProfileProvider = ({ children }) => {
   };
 
   // 소개문 업데이트
-  const updateBiography = async (newBiography, newBiographyEn) => {
+  const updateBiography = async (newBiography, newBiographyEn, details = {}) => {
     try {
       setError(null);
       const profileRef = doc(db, 'profile', 'main');
       const updateData = {
         biography: newBiography,
+        biographyTitle: details.biographyTitle ?? profile.biographyTitle ?? '',
+        biographyTitle_en: details.biographyTitle_en ?? profile.biographyTitle_en ?? '',
+        aboutArtworkId: details.aboutArtworkId ?? profile.aboutArtworkId ?? '',
         updatedAt: new Date()
       };
       
@@ -128,6 +147,53 @@ export const ProfileProvider = ({ children }) => {
     } catch (error) {
       console.error('소개문 업데이트 실패:', error);
       setError('소개문 업데이트 중 오류가 발생했습니다.');
+      return { success: false, error: error.message };
+    }
+  };
+
+  const updateHomeSettings = async (settings) => {
+    try {
+      setError(null);
+      const profileRef = doc(db, 'profile', 'main');
+      const updateData = { updatedAt: new Date() };
+      if (settings.exhibitionTitle !== undefined) {
+        updateData.homeExhibitionTitle = settings.exhibitionTitle;
+      }
+      if (settings.exhibitionDate !== undefined) {
+        updateData.homeExhibitionDate = settings.exhibitionDate;
+      }
+      if (settings.galleryName !== undefined) {
+        updateData.homeGalleryName = settings.galleryName;
+      }
+      if (settings.artworkIds !== undefined) {
+        updateData.homeArtworkIds = settings.artworkIds.map(String);
+      }
+      await updateDoc(profileRef, updateData);
+      return { success: true };
+    } catch (error) {
+      console.error('홈 설정 업데이트 실패:', error);
+      setError('홈 설정 업데이트 중 오류가 발생했습니다.');
+      return { success: false, error: error.message };
+    }
+  };
+
+  const updateAwardItems = async (awardItems) => {
+    try {
+      setError(null);
+      const profileRef = doc(db, 'profile', 'main');
+      await updateDoc(profileRef, {
+        awardItems: awardItems.map((item, index) => ({
+          id: item.id || `award-${Date.now()}-${index}`,
+          year: item.year,
+          content: item.content,
+          content_en: item.content_en
+        })),
+        updatedAt: new Date()
+      });
+      return { success: true };
+    } catch (error) {
+      console.error('선정 목록 업데이트 실패:', error);
+      setError('선정 목록 업데이트 중 오류가 발생했습니다.');
       return { success: false, error: error.message };
     }
   };
@@ -213,32 +279,19 @@ export const ProfileProvider = ({ children }) => {
     setError(null);
   };
 
-  // 기본 데이터로 강제 동기화 (개발용)
-  const syncDefaultData = async () => {
-    try {
-      const defaultProfile = getDefaultProfile();
-      const profileRef = doc(db, 'profile', 'main');
-      await setDoc(profileRef, defaultProfile);
-      console.log('기본 데이터로 동기화 완료');
-      return { success: true };
-    } catch (error) {
-      console.error('데이터 동기화 실패:', error);
-      return { success: false, error: error.message };
-    }
-  };
-
   return (
     <ProfileContext.Provider value={{
       profile,
       isLoading,
       error,
       updateBiography,
+      updateHomeSettings,
+      updateAwardItems,
       addExhibition,
       updateExhibition,
       deleteExhibition,
       getExhibitionById,
-      clearError,
-      syncDefaultData
+      clearError
     }}>
       {children}
     </ProfileContext.Provider>

@@ -3,40 +3,14 @@ import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { useArtworks } from '../../contexts/ArtworkContext';
 import { uploadImage, deleteImage, extractImagePath } from '../../utils/imageUpload';
+import AdminPageHeader from './AdminPageHeader';
+import useUnsavedChanges from '../../hooks/useUnsavedChanges';
 
 const Container = styled.div`
   min-height: 100vh;
   background: #f5f5f5;
   overflow-y: auto;
   height: 100vh;
-`;
-
-const Header = styled.header`
-  background: white;
-  padding: 1rem 2rem;
-  border-bottom: 1px solid #eee;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const Title = styled.h1`
-  color: #333;
-  margin: 0;
-  font-size: 1.5rem;
-`;
-
-const BackButton = styled.button`
-  padding: 0.5rem 1rem;
-  background: #6c757d;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  
-  &:hover {
-    background: #5a6268;
-  }
 `;
 
 const Content = styled.div`
@@ -180,7 +154,7 @@ const Button = styled.button`
 const ArtworkForm = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const { addArtwork, updateArtwork, getArtworkById } = useArtworks();
+  const { artworks, addArtwork, updateArtwork } = useArtworks();
   const isEdit = Boolean(id);
 
   const [formData, setFormData] = useState({
@@ -199,10 +173,12 @@ const ArtworkForm = () => {
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isImageUploading, setIsImageUploading] = useState(false);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const { confirmNavigation, markSaved } = useUnsavedChanges(hasUnsavedChanges);
 
   useEffect(() => {
     if (isEdit && id) {
-      const artwork = getArtworkById(id);
+      const artwork = artworks.find(item => String(item.id) === String(id));
       if (artwork) {
         setFormData({
           title: artwork.title || '',
@@ -217,7 +193,7 @@ const ArtworkForm = () => {
         setImagePreview(artwork.image || '');
       }
     }
-  }, [isEdit, id, getArtworkById]);
+  }, [isEdit, id, artworks]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -225,6 +201,7 @@ const ArtworkForm = () => {
       ...prev,
       [name]: value
     }));
+    setHasUnsavedChanges(true);
     
     // 에러 메시지 제거
     if (errors[name]) {
@@ -257,6 +234,7 @@ const ArtworkForm = () => {
       }
 
       setImageFile(file);
+      setHasUnsavedChanges(true);
       setIsImageUploading(true);
       
       // 이미지 미리보기
@@ -352,7 +330,7 @@ const ArtworkForm = () => {
 
       if (isEdit) {
         // 수정 시 기존 이미지가 변경되었다면 기존 이미지 삭제
-        const existingArtwork = getArtworkById(id);
+        const existingArtwork = artworks.find(artwork => String(artwork.id) === String(id));
         if (existingArtwork && existingArtwork.imagePath && 
             existingArtwork.imagePath !== formData.imagePath && 
             formData.imagePath) {
@@ -362,6 +340,7 @@ const ArtworkForm = () => {
         const result = await updateArtwork(id, artworkData);
         if (result.success) {
           alert('작품이 수정되었습니다.');
+          markSaved();
           navigate('/admin/artwork');
         } else {
           alert('작품 수정에 실패했습니다: ' + result.error);
@@ -370,6 +349,7 @@ const ArtworkForm = () => {
         const result = await addArtwork(artworkData);
         if (result.success) {
           alert('작품이 추가되었습니다.');
+          markSaved();
           navigate('/admin/artwork');
         } else {
           alert('작품 추가에 실패했습니다: ' + result.error);
@@ -384,17 +364,16 @@ const ArtworkForm = () => {
   };
 
   const handleCancel = () => {
-    navigate('/admin/artwork');
+    if (confirmNavigation()) navigate('/admin/artwork');
   };
 
   return (
     <Container>
-      <Header>
-        <Title>{isEdit ? '작품 수정' : '작품 추가'}</Title>
-        <BackButton onClick={handleCancel}>
-          목록으로 돌아가기
-        </BackButton>
-      </Header>
+      <AdminPageHeader
+        title={isEdit ? '작품 수정' : '작품 추가'}
+        backTo="/admin/artwork"
+        onBack={handleCancel}
+      />
       
       <Content>
         <Form onSubmit={handleSubmit}>

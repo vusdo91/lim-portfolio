@@ -2,40 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { useProfile } from '../../contexts/ProfileContext';
+import AdminPageHeader from './AdminPageHeader';
+import useUnsavedChanges from '../../hooks/useUnsavedChanges';
 
 const Container = styled.div`
   min-height: 100vh;
   background: #f5f5f5;
   overflow-y: auto;
   height: 100vh;
-`;
-
-const Header = styled.header`
-  background: white;
-  padding: 1rem 2rem;
-  border-bottom: 1px solid #eee;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const Title = styled.h1`
-  color: #333;
-  margin: 0;
-  font-size: 1.5rem;
-`;
-
-const BackButton = styled.button`
-  padding: 0.5rem 1rem;
-  background: #6c757d;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  
-  &:hover {
-    background: #5a6268;
-  }
 `;
 
 const Content = styled.div`
@@ -145,7 +119,7 @@ const Button = styled.button`
 const ExhibitionForm = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const { addExhibition, updateExhibition, getExhibitionById } = useProfile();
+  const { profile, addExhibition, updateExhibition } = useProfile();
   const isEdit = Boolean(id);
 
   const [formData, setFormData] = useState({
@@ -157,6 +131,9 @@ const ExhibitionForm = () => {
 
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [saveError, setSaveError] = useState('');
+  const { confirmNavigation, markSaved } = useUnsavedChanges(hasUnsavedChanges);
 
   // 연도 옵션 생성 (현재 연도부터 1990년까지)
   const currentYear = new Date().getFullYear();
@@ -167,7 +144,7 @@ const ExhibitionForm = () => {
 
   useEffect(() => {
     if (isEdit && id) {
-      const exhibition = getExhibitionById(parseInt(id));
+      const exhibition = profile.exhibitions.find(item => item.id === parseInt(id));
       if (exhibition) {
         setFormData({
           type: exhibition.type || 'solo',
@@ -177,7 +154,7 @@ const ExhibitionForm = () => {
         });
       }
     }
-  }, [isEdit, id, getExhibitionById, currentYear]);
+  }, [isEdit, id, profile.exhibitions, currentYear]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -185,6 +162,7 @@ const ExhibitionForm = () => {
       ...prev,
       [name]: value
     }));
+    setHasUnsavedChanges(true);
     
     // 에러 메시지 제거
     if (errors[name]) {
@@ -236,31 +214,40 @@ const ExhibitionForm = () => {
       };
 
       if (isEdit) {
-        updateExhibition(parseInt(id), exhibitionData);
+        const result = await updateExhibition(parseInt(id), exhibitionData);
+        if (!result.success) {
+          setSaveError(`저장에 실패했습니다: ${result.error}`);
+          return;
+        }
       } else {
-        addExhibition(exhibitionData);
+        const result = await addExhibition(exhibitionData);
+        if (!result.success) {
+          setSaveError(`저장에 실패했습니다: ${result.error}`);
+          return;
+        }
       }
 
+      markSaved();
       navigate('/admin/profile');
     } catch (error) {
       console.error('전시 정보 저장 중 오류:', error);
+      setSaveError('전시 정보 저장 중 오류가 발생했습니다.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleCancel = () => {
-    navigate('/admin/profile');
+    if (confirmNavigation()) navigate('/admin/profile');
   };
 
   return (
     <Container>
-      <Header>
-        <Title>{isEdit ? '전시 수정' : '전시 추가'}</Title>
-        <BackButton onClick={handleCancel}>
-          프로필 관리로 돌아가기
-        </BackButton>
-      </Header>
+      <AdminPageHeader
+        title={isEdit ? '전시 수정' : '전시 추가'}
+        backTo="/admin/profile"
+        onBack={handleCancel}
+      />
       
       <Content>
         <Form onSubmit={handleSubmit}>
@@ -341,6 +328,7 @@ const ExhibitionForm = () => {
               취소
             </Button>
           </FormActions>
+          {saveError && <p role="alert">{saveError}</p>}
         </Form>
       </Content>
     </Container>

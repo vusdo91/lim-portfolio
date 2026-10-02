@@ -1,16 +1,33 @@
-import React from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import styled from 'styled-components';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useProfile } from '../contexts/ProfileContext';
+import { useArtworks } from '../contexts/ArtworkContext';
+import defaultArtworks from '../data/artworks';
+import { getGalleryArtworks } from '../utils/indexPrototypeLogic';
+import { DEFAULT_AWARD_ITEMS } from '../utils/profileDefaults';
+import { usePageTransitionActive } from '../components/PageTransition';
 import { t } from '../utils/translations';
+import './IndexPrototype.css';
+import SkeletonImage, { ImageSkeleton } from '../components/SkeletonImage';
 
 const AboutContainer = styled.div`
   min-height: calc(100vh - 112px);
   background: white;
+  font-family: 'Pretendard Variable', Pretendard, sans-serif;
   padding: 4rem 2rem;
   display: flex;
   flex-direction: column;
   align-items: center;
+  [data-about-reveal] {
+    opacity: 0;
+    transform: translateY(26px);
+    transition: opacity 760ms ease, transform 760ms cubic-bezier(.2,.7,.2,1);
+  }
+  [data-about-reveal][data-revealed='true'] { opacity: 1; transform: translateY(0); }
+  @media (prefers-reduced-motion: reduce) {
+    [data-about-reveal] { opacity: 1; transform: none; transition: none; }
+  }
   
   @media (max-width: 768px) {
     min-height: calc(100vh - 130px);
@@ -33,18 +50,44 @@ const ContentWrapper = styled.div`
     padding: 0;
   }
 `;
+const Introduction = styled.section`
+  width: min(56vw, 720px);
+  margin: 0 auto 6rem;
+  @media (max-width: 768px) { width: 100%; margin-bottom: 4rem; }
+`;
+const FeaturedArtwork = styled.figure`
+  margin: 0 0 46px;
+  img { display: block; width: auto; max-width: 100%; max-height: min(65vh, 560px); margin: 0 auto; object-fit: contain; }
+  figcaption { margin-top: 12px; text-align: right; }
+  strong { display: block; font-size: 13px; font-weight: 500; }
+  span { display: block; margin-top: 3px; font-size: 12px; font-weight: 300; color: #505050; }
+  @media (max-width: 768px) { margin-bottom: 36px; }
+`;
+const IntroductionTitle = styled.h1`
+  margin: 0 0 20px;
+  color: #1a1a1a;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.45;
+`;
 
 const Biography = styled.div`
   line-height: 1.7;
   font-size: 1rem;
   color: #505050;
-  margin-bottom: 6rem;
+  margin-bottom: 0;
   text-align: justify;
+  white-space: pre-line;
   
   @media (max-width: 768px) {
     font-size: 0.9rem;
     margin-bottom: 4rem;
   }
+`;
+
+const BiographyParagraph = styled.p`
+  margin: 0;
+  & + & { margin-top: 1em; }
 `;
 
 const SectionTitle = styled.h2`
@@ -67,15 +110,6 @@ const ExhibitionSection = styled.div`
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
     gap: 3rem;
-  }
-`;
-
-const ExhibitionList = styled.div`
-  h3 {
-    font-size: 1rem;
-    font-weight: 500;
-    color: #333;
-    margin-bottom: 1rem;
   }
 `;
 
@@ -186,9 +220,85 @@ const ExhibitionItem = styled.div`
   }
 `;
 
+function useAboutReveal(containerRef, language, exhibitions, artworkId, introductionTitle, biography, paused) {
+  const previousLanguage = useRef(language);
+  useLayoutEffect(() => {
+    if (previousLanguage.current === language) return undefined;
+    previousLanguage.current = language;
+    const container = containerRef.current;
+    if (!container) return undefined;
+    const scroller = container.closest('main');
+    const bounds = scroller?.getBoundingClientRect();
+    const header = document.querySelector('[data-site-header]')?.getBoundingClientRect();
+    const top = Math.max(bounds?.top || 0, header?.bottom || 0);
+    const bottom = Math.min(bounds?.bottom || window.innerHeight, window.innerHeight);
+    const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    const animations = [];
+    let visibleIndex = 0;
+    container.querySelectorAll('[data-about-reveal]').forEach(element => {
+      const rect = element.getBoundingClientRect();
+      // Translated sections inserted above the viewport have already been passed.
+      if (rect.bottom <= top) element.dataset.revealed = 'true';
+      if (rect.bottom <= top || rect.top >= bottom || rect.height === 0) return;
+      element.dataset.revealed = 'true';
+      if (!reduced && element.animate) {
+        animations.push(element.animate([
+          { opacity: 0, transform: 'translateY(26px)' },
+          { opacity: 1, transform: 'translateY(0)' }
+        ], { duration: 760, delay: visibleIndex++ * 120, easing: 'cubic-bezier(.2,.7,.2,1)', fill: 'backwards' }));
+      }
+    });
+    return () => animations.forEach(animation => animation.cancel());
+  }, [containerRef, language]);
+  useEffect(() => {
+    if (paused) return undefined;
+    const container = containerRef.current;
+    if (!container) return undefined;
+    const elements = [...container.querySelectorAll('[data-about-reveal]')]
+      .filter(element => element.dataset.revealed !== 'true');
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches || !window.IntersectionObserver) {
+      elements.forEach(element => { element.dataset.revealed = 'true'; });
+      return undefined;
+    }
+    const queue = [];
+    let timer = null;
+    const revealNext = () => {
+      const element = queue.shift();
+      if (!element) { timer = null; return; }
+      element.dataset.revealed = 'true';
+      timer = window.setTimeout(revealNext, 120);
+    };
+    const observer = new window.IntersectionObserver(entries => {
+      entries.filter(entry => entry.isIntersecting)
+        .map(entry => entry.target)
+        .sort((left, right) => {
+          const a = left.getBoundingClientRect();
+          const b = right.getBoundingClientRect();
+          return a.top - b.top || a.left - b.left;
+        })
+        .forEach(element => { observer.unobserve(element); queue.push(element); });
+      if (timer === null && queue.length) revealNext();
+    }, { threshold: .08, rootMargin: '0px 0px -5% 0px' });
+    elements.forEach(element => observer.observe(element));
+    return () => { observer.disconnect(); if (timer !== null) window.clearTimeout(timer); };
+  }, [containerRef, language, exhibitions, artworkId, introductionTitle, biography, paused]);
+}
+
 const About = () => {
-  const { language } = useLanguage();
-  const { profile, syncDefaultData } = useProfile();
+  const { language, languageTransitioning } = useLanguage();
+  const { profile, isLoading: profileLoading } = useProfile();
+  const pageTransitioning = usePageTransitionActive();
+  const { artworks: remoteArtworks, isLoading: artworksLoading } = useArtworks();
+  const containerRef = useRef(null);
+  const artworks = useMemo(() => getGalleryArtworks(remoteArtworks, defaultArtworks), [remoteArtworks]);
+  const isLoading = Boolean(profileLoading || artworksLoading);
+  const featuredArtwork = isLoading ? null : (artworks.find(artwork => artwork.id === String(profile.aboutArtworkId)) || artworks[0]);
+  const introductionTitle = language === 'ko'
+    ? profile.biographyTitle
+    : (profile.biographyTitle_en || profile.biographyTitle);
+  const biography = language === 'ko' ? profile.biography : (profile.biography_en || t('about.biography', language));
+  const biographyParagraphs = (biography || '').split(/(?:\r?\n[\t ]*)+/).filter(paragraph => paragraph.trim());
+  useAboutReveal(containerRef, language, profile.exhibitions, featuredArtwork?.id, introductionTitle, biography, pageTransitioning || languageTransitioning || isLoading);
   
   // 언어에 따라 전시 데이터 선택 및 연도별 그룹화
   const getExhibitionData = () => {
@@ -240,68 +350,48 @@ const About = () => {
   const exhibitionData = getExhibitionData();
   const soloExhibitions = exhibitionData.solo;
   const groupExhibitions = exhibitionData.group;
+  const awardItems = profile.awardItems || DEFAULT_AWARD_ITEMS;
   
-  // 임시 동기화 함수 (개발용)
-  const handleSyncData = async () => {
-    console.log('데이터 동기화 시작...');
-    const result = await syncDefaultData();
-    if (result.success) {
-      console.log('데이터 동기화 성공');
-      alert('데이터가 동기화되었습니다. 페이지를 새로고침하세요.');
-    } else {
-      console.error('데이터 동기화 실패:', result.error);
-      alert('데이터 동기화에 실패했습니다.');
-    }
-  };
-
   return (
-    <AboutContainer>
+    <AboutContainer ref={containerRef} aria-busy={isLoading}>
       <ContentArea>
-        {/* 임시 동기화 버튼 (개발용) */}
-        {process.env.NODE_ENV === 'development' && (
-          <button 
-            onClick={handleSyncData}
-            style={{
-              position: 'fixed',
-              top: '10px',
-              right: '10px',
-              padding: '10px',
-              backgroundColor: '#ff4444',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              zIndex: 1000
-            }}
-          >
-            DB 동기화
-          </button>
-        )}
-        
-        <ContentWrapper>
-          <Biography className="noto-sans">
-            {language === 'ko' ? profile.biography : (profile.biography_en || t('about.biography', language))}
-          </Biography>
+        {isLoading && <ImageSkeleton aria-label="대표 작품 로딩 중" style={{ width: 'min(56vw, 720px)', maxWidth: '100%', height: 'min(65vh, 560px)', margin: '0 auto 46px' }} />}
+        <ContentWrapper style={{ visibility: isLoading ? 'hidden' : undefined }}>
+          <Introduction>
+            {featuredArtwork && <FeaturedArtwork data-about-reveal>
+              <SkeletonImage src={featuredArtwork.image} alt={featuredArtwork.title} skeletonStyle={{ display: 'grid', width: 'fit-content', margin: '0 auto' }} />
+              <figcaption>
+                <strong>{featuredArtwork.title}</strong>
+                <span>{[featuredArtwork.size, featuredArtwork.material, featuredArtwork.year].filter(Boolean).join(', ')}</span>
+              </figcaption>
+            </FeaturedArtwork>}
+            {introductionTitle && <IntroductionTitle data-about-reveal>{introductionTitle}</IntroductionTitle>}
+            <Biography>
+              {biographyParagraphs.map((paragraph, index) => (
+                <BiographyParagraph key={index} data-about-reveal>{paragraph}</BiographyParagraph>
+              ))}
+            </Biography>
+          </Introduction>
           
           <SectionGroup>
-            <SectionTitle>{t('about.education', language)}</SectionTitle>
+            <SectionTitle data-about-reveal>{t('about.education', language)}</SectionTitle>
             {t('about.educationItems', language).map((item, index) => (
-              <ExhibitionItem key={index}>
+              <ExhibitionItem key={index} data-about-reveal>
                 <span className="year">{item.year}</span>
                 <span className="content">{item.content}</span>
               </ExhibitionItem>
             ))}
           </SectionGroup>
           
-          <SectionDivider />
+          <SectionDivider data-about-reveal />
           
           <SectionGroup>
             <ExhibitionSection>
               <ExhibitionListContainer>
-                <SectionTitle>{t('about.soloExhibitions', language)}</SectionTitle>
+                <SectionTitle data-about-reveal>{t('about.soloExhibitions', language)}</SectionTitle>
                 {soloExhibitions.length > 0 ? (
                   soloExhibitions.map((yearGroup, yearIndex) => (
-                    <ExhibitionYearGroup key={yearIndex}>
+                    <ExhibitionYearGroup key={yearIndex} data-about-reveal>
                       <ExhibitionYear>{yearGroup.year}</ExhibitionYear>
                       <ExhibitionContent>
                         {yearGroup.exhibitions.map((exhibition, exhibitionIndex) => (
@@ -313,17 +403,17 @@ const About = () => {
                     </ExhibitionYearGroup>
                   ))
                 ) : (
-                  <div style={{ color: '#666', fontStyle: 'italic' }}>
+                  <div data-about-reveal style={{ color: '#666', fontStyle: 'italic' }}>
                     {language === 'ko' ? '개인전 기록이 없습니다.' : 'No solo exhibitions recorded.'}
                   </div>
                 )}
               </ExhibitionListContainer>
               
               <ExhibitionListContainer>
-                <SectionTitle>{t('about.groupExhibitions', language)}</SectionTitle>
+                <SectionTitle data-about-reveal>{t('about.groupExhibitions', language)}</SectionTitle>
                 {groupExhibitions.length > 0 ? (
                   groupExhibitions.map((yearGroup, yearIndex) => (
-                    <ExhibitionYearGroup key={yearIndex}>
+                    <ExhibitionYearGroup key={yearIndex} data-about-reveal>
                       <ExhibitionYear>{yearGroup.year}</ExhibitionYear>
                       <ExhibitionContent>
                         {yearGroup.exhibitions.map((exhibition, exhibitionIndex) => (
@@ -339,7 +429,7 @@ const About = () => {
                     </ExhibitionYearGroup>
                   ))
                 ) : (
-                  <div style={{ color: '#666', fontStyle: 'italic' }}>
+                  <div data-about-reveal style={{ color: '#666', fontStyle: 'italic' }}>
                     {language === 'ko' ? '그룹전 기록이 없습니다.' : 'No group exhibitions recorded.'}
                   </div>
                 )}
@@ -347,14 +437,16 @@ const About = () => {
             </ExhibitionSection>
           </SectionGroup>
           
-          <SectionDivider />
+          <SectionDivider data-about-reveal />
           
           <SectionGroup>
-            <SectionTitle>{t('about.awards', language)}</SectionTitle>
-            {t('about.awardItems', language).map((item, index) => (
-              <ExhibitionItem key={index}>
+            <SectionTitle data-about-reveal>{t('about.awards', language)}</SectionTitle>
+            {awardItems.map((item, index) => (
+              <ExhibitionItem key={index} data-about-reveal>
                 <span className="year">{item.year}</span>
-                <span className="content">{item.content}</span>
+                <span className="content">
+                  {language === 'ko' ? item.content : (item.content_en || item.content)}
+                </span>
               </ExhibitionItem>
             ))}
           </SectionGroup>

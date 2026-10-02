@@ -1,16 +1,17 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Navigate, Routes, Route, useParams } from 'react-router-dom';
 import styled, { createGlobalStyle } from 'styled-components';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { FirebaseAuthProvider } from './contexts/FirebaseAuthContext';
 import { ArtworkProvider } from './contexts/ArtworkContext';
 import { ProfileProvider } from './contexts/ProfileContext';
-import Header from './components/Header';
-import Footer from './components/Footer';
+import SiteHeader from './components/SiteHeader';
+import { PageTransitionProvider } from './components/PageTransition';
 import ProtectedRoute from './components/ProtectedRoute';
-import Home from './pages/Home';
+import IndexPrototype from './pages/IndexPrototype';
+import ArchivePrototype from './pages/ArchivePrototype';
+import ArtworkDetail from './pages/ArtworkDetail';
 import About from './pages/About';
-import Works from './pages/Works';
 import Contact from './pages/Contact';
 import AdminLogin from './pages/admin/AdminLogin';
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -19,6 +20,10 @@ import ArtworkForm from './pages/admin/ArtworkForm';
 import ProfileManagement from './pages/admin/ProfileManagement';
 import BiographyEdit from './pages/admin/BiographyEdit';
 import ExhibitionForm from './pages/admin/ExhibitionForm';
+import HomeManagement from './pages/admin/HomeManagement';
+import HomeExhibitionForm from './pages/admin/HomeExhibitionForm';
+import HomeArtworkForm from './pages/admin/HomeArtworkForm';
+import AwardForm from './pages/admin/AwardForm';
 import VisitorTracker from './components/VisitorTracker';
 
 const GlobalStyle = createGlobalStyle`
@@ -77,18 +82,20 @@ const AppContainer = styled.div`
   flex-direction: column;
   overflow: hidden;
 `;
+const AboutAppContainer = styled(AppContainer)`
+  &, * { font-family: 'Pretendard Variable', Pretendard, sans-serif !important; }
+`;
 
 const MainContent = styled.main`
   flex: 1;
-  height: calc(100vh - 56px);
-  margin-top: 56px;
+  height: calc(100vh - 64px);
+  padding-top: 32px;
   overflow-y: auto;
   overflow-x: hidden;
   
   @media (max-width: 768px) {
-    height: calc(100vh - 170px);
-    margin-top: 70px;
-    padding: 0;
+    height: calc(100vh - 105px);
+    padding-top: 52.5px;
   }
 `;
 
@@ -106,6 +113,11 @@ const PageContent = styled.div`
   flex: 1;
 `;
 
+function LegacyWorksDetailRedirect() {
+  const { artworkId } = useParams();
+  return <Navigate to={`/works/${encodeURIComponent(artworkId)}`} replace />;
+}
+
 function App() {
   return (
     <FirebaseAuthProvider>
@@ -115,56 +127,35 @@ function App() {
             <Router>
               <GlobalStyle />
               <VisitorTracker />
+              <PageTransitionProvider>
               <Routes>
             {/* 일반 사이트 라우트 */}
-            <Route path="/" element={
-              <AppContainer>
-                <Header />
-                <MainContent>
-                  <ContentWrapper>
-                    <PageContent>
-                      <Home />
-                    </PageContent>
-                    <Footer />
-                  </ContentWrapper>
-                </MainContent>
-              </AppContainer>
-            } />
+            <Route path="/" element={<IndexPrototype />} />
+            <Route path="/index-prototype" element={<Navigate to="/" replace />} />
+            <Route path="/archive-prototype" element={<Navigate to="/works" replace />} />
+            <Route path="/archive-prototype/:artworkId" element={<LegacyWorksDetailRedirect />} />
+            <Route path="/works" element={<ArchivePrototype />} />
+            <Route path="/works/:artworkId" element={<ArtworkDetail />} />
             <Route path="/about" element={
-              <AppContainer>
-                <Header />
+              <AboutAppContainer>
                 <MainContent>
+                  <SiteHeader />
                   <ContentWrapper>
                     <PageContent>
                       <About />
                     </PageContent>
-                    <Footer />
                   </ContentWrapper>
                 </MainContent>
-              </AppContainer>
-            } />
-            <Route path="/works" element={
-              <AppContainer>
-                <Header />
-                <MainContent>
-                  <ContentWrapper>
-                    <PageContent>
-                      <Works />
-                    </PageContent>
-                    <Footer />
-                  </ContentWrapper>
-                </MainContent>
-              </AppContainer>
+              </AboutAppContainer>
             } />
             <Route path="/contact" element={
               <AppContainer>
-                <Header />
                 <MainContent>
+                  <SiteHeader />
                   <ContentWrapper>
                     <PageContent>
                       <Contact />
                     </PageContent>
-                    <Footer />
                   </ContentWrapper>
                 </MainContent>
               </AppContainer>
@@ -175,6 +166,21 @@ function App() {
             <Route path="/admin/dashboard" element={
               <ProtectedRoute>
                 <AdminDashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/home" element={
+              <ProtectedRoute>
+                <HomeManagement />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/home/exhibition" element={
+              <ProtectedRoute>
+                <HomeExhibitionForm />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/home/artworks" element={
+              <ProtectedRoute>
+                <HomeArtworkForm />
               </ProtectedRoute>
             } />
             <Route path="/admin/artwork" element={
@@ -212,12 +218,23 @@ function App() {
                 <ExhibitionForm />
               </ProtectedRoute>
             } />
+            <Route path="/admin/profile/award/add" element={
+              <ProtectedRoute>
+                <AwardForm />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/profile/award/edit/:id" element={
+              <ProtectedRoute>
+                <AwardForm />
+              </ProtectedRoute>
+            } />
             <Route path="/admin/*" element={
               <ProtectedRoute>
                 <AdminDashboard />
               </ProtectedRoute>
             } />
           </Routes>
+          </PageTransitionProvider>
         </Router>
       </LanguageProvider>
     </ProfileProvider>

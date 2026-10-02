@@ -1,41 +1,16 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { useProfile } from '../../contexts/ProfileContext';
+import { useArtworks } from '../../contexts/ArtworkContext';
+import AdminPageHeader from './AdminPageHeader';
+import useUnsavedChanges from '../../hooks/useUnsavedChanges';
 
 const Container = styled.div`
   min-height: 100vh;
   background: #f5f5f5;
   overflow-y: auto;
   height: 100vh;
-`;
-
-const Header = styled.header`
-  background: white;
-  padding: 1rem 2rem;
-  border-bottom: 1px solid #eee;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const Title = styled.h1`
-  color: #333;
-  margin: 0;
-  font-size: 1.5rem;
-`;
-
-const BackButton = styled.button`
-  padding: 0.5rem 1rem;
-  background: #6c757d;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  
-  &:hover {
-    background: #5a6268;
-  }
 `;
 
 const Content = styled.div`
@@ -60,6 +35,28 @@ const Label = styled.label`
   margin-bottom: 0.5rem;
   font-weight: 500;
   color: #333;
+`;
+const TextInput = styled.input`
+  width: 100%;
+  padding: .85rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font: inherit;
+  &:focus { outline: 2px solid #2d2d2d; outline-offset: 2px; }
+`;
+const ArtworkSelect = styled.select`
+  width: 100%;
+  padding: .85rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #fff;
+  font: inherit;
+  &:focus { outline: 2px solid #2d2d2d; outline-offset: 2px; }
+`;
+const HelpText = styled.p`
+  margin-top: .5rem;
+  color: #666;
+  font-size: .85rem;
 `;
 
 const TextArea = styled.textarea`
@@ -150,21 +147,43 @@ const PreviewContent = styled.div`
 const BiographyEdit = () => {
   const navigate = useNavigate();
   const { profile, updateBiography } = useProfile();
+  const { artworks } = useArtworks();
   const [biography, setBiography] = useState(profile.biography || '');
   const [biographyEn, setBiographyEn] = useState(profile.biography_en || '');
+  const [biographyTitle, setBiographyTitle] = useState(profile.biographyTitle || '');
+  const [biographyTitleEn, setBiographyTitleEn] = useState(profile.biographyTitle_en || '');
+  const [aboutArtworkId, setAboutArtworkId] = useState(profile.aboutArtworkId || '');
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const handleBack = () => {
-    navigate('/admin/profile');
-  };
+  const [saveError, setSaveError] = useState('');
+  const hasUnsavedChanges = biography !== (profile.biography || '')
+    || biographyEn !== (profile.biography_en || '')
+    || biographyTitle !== (profile.biographyTitle || '')
+    || biographyTitleEn !== (profile.biographyTitle_en || '')
+    || aboutArtworkId !== (profile.aboutArtworkId || '');
+  const { confirmNavigation, markSaved } = useUnsavedChanges(hasUnsavedChanges);
+  useEffect(() => {
+    setBiography(profile.biography || '');
+    setBiographyEn(profile.biography_en || '');
+    setBiographyTitle(profile.biographyTitle || '');
+    setBiographyTitleEn(profile.biographyTitle_en || '');
+    setAboutArtworkId(profile.aboutArtworkId || '');
+  }, [profile.biography, profile.biography_en, profile.biographyTitle, profile.biographyTitle_en, profile.aboutArtworkId]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
 
     try {
-      updateBiography(biography, biographyEn);
-      navigate('/admin/profile');
+      const result = await updateBiography(biography, biographyEn, {
+        biographyTitle: biographyTitle.trim(),
+        biographyTitle_en: biographyTitleEn.trim(),
+        aboutArtworkId
+      });
+      if (result.success) {
+        markSaved();
+        navigate('/admin/profile');
+      }
+      else setSaveError('저장에 실패했습니다. 다시 시도해 주세요.');
     } catch (error) {
       console.error('소개문 저장 중 오류:', error);
     } finally {
@@ -173,26 +192,33 @@ const BiographyEdit = () => {
   };
 
   const handleCancel = () => {
-    if (biography !== profile.biography || biographyEn !== profile.biography_en) {
-      if (window.confirm('변경사항이 저장되지 않습니다. 정말 취소하시겠습니까?')) {
-        navigate('/admin/profile');
-      }
-    } else {
-      navigate('/admin/profile');
-    }
+    if (confirmNavigation()) navigate('/admin/profile');
   };
 
   return (
     <Container>
-      <Header>
-        <Title>작가 소개문 편집</Title>
-        <BackButton onClick={handleBack}>
-          프로필 관리로 돌아가기
-        </BackButton>
-      </Header>
+      <AdminPageHeader title="작가 소개문 편집" backTo="/admin/profile" onBack={handleCancel} />
       
       <Content>
         <Form onSubmit={handleSubmit}>
+          <FormGroup>
+            <Label htmlFor="aboutArtwork">About 대표 작품</Label>
+            <ArtworkSelect id="aboutArtwork" value={aboutArtworkId} onChange={event => setAboutArtworkId(event.target.value)}>
+              <option value="">첫 번째 등록 작품 자동 표시</option>
+              {artworks.filter(artwork => artwork.image && artwork.title).map(artwork =>
+                <option key={artwork.id} value={String(artwork.id)}>{artwork.title} ({artwork.year || '연도 미입력'})</option>
+              )}
+            </ArtworkSelect>
+            <HelpText>Works 관리자에서 등록한 작품 중 한 점을 선택하세요.</HelpText>
+          </FormGroup>
+          <FormGroup>
+            <Label htmlFor="biographyTitle">소개글 제목 (한국어)</Label>
+            <TextInput id="biographyTitle" value={biographyTitle} onChange={event => setBiographyTitle(event.target.value)} placeholder="소개글 제목을 입력해 주세요" />
+          </FormGroup>
+          <FormGroup>
+            <Label htmlFor="biographyTitleEn">소개글 제목 (English)</Label>
+            <TextInput id="biographyTitleEn" value={biographyTitleEn} onChange={event => setBiographyTitleEn(event.target.value)} placeholder="Enter the introduction title" />
+          </FormGroup>
           <FormGroup>
             <Label htmlFor="biography">작가 소개문 (한국어)</Label>
             <TextArea
@@ -235,6 +261,7 @@ const BiographyEdit = () => {
               취소
             </Button>
           </FormActions>
+          {saveError && <p role="alert">{saveError}</p>}
         </Form>
 
         {/* 미리보기 섹션 */}

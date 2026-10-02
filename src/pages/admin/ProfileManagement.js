@@ -2,32 +2,16 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { useProfile } from '../../contexts/ProfileContext';
+import { useArtworks } from '../../contexts/ArtworkContext';
+import AdminPageHeader from './AdminPageHeader';
+import YearFilter from '../../components/YearFilter';
+import { DEFAULT_AWARD_ITEMS } from '../../utils/profileDefaults';
 
 const Container = styled.div`
   min-height: 100vh;
   background: #f5f5f5;
   overflow-y: auto;
   height: 100vh;
-`;
-
-const Header = styled.header`
-  background: white;
-  padding: 1rem 2rem;
-  border-bottom: 1px solid #eee;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const Title = styled.h1`
-  color: #333;
-  margin: 0;
-  font-size: 1.5rem;
-`;
-
-const HeaderButtons = styled.div`
-  display: flex;
-  gap: 1rem;
 `;
 
 const Button = styled.button`
@@ -47,14 +31,6 @@ const Button = styled.button`
     }
   }
   
-  &.secondary {
-    background: #6c757d;
-    color: white;
-    
-    &:hover {
-      background: #5a6268;
-    }
-  }
 `;
 
 const Content = styled.div`
@@ -133,6 +109,13 @@ const ExhibitionTable = styled.table`
   th:nth-child(3), td:nth-child(3) { width: 35%; }    /* 한국어 전시명 */
   th:nth-child(4), td:nth-child(4) { width: 35%; }    /* 영문 전시명 */
   th:nth-child(5), td:nth-child(5) { width: 80px; }   /* 관리 */
+`;
+
+const AwardTable = styled(ExhibitionTable)`
+  th:nth-child(1), td:nth-child(1) { width: 70px; }
+  th:nth-child(2), td:nth-child(2) { width: 40%; }
+  th:nth-child(3), td:nth-child(3) { width: 40%; }
+  th:nth-child(4), td:nth-child(4) { width: 80px; }
 `;
 
 const TypeBadge = styled.span`
@@ -309,13 +292,11 @@ const LanguageLabel = styled.div`
 
 const ProfileManagement = () => {
   const navigate = useNavigate();
-  const { profile, deleteExhibition, isLoading } = useProfile();
+  const { profile, deleteExhibition, updateAwardItems, isLoading } = useProfile();
+  const { artworks } = useArtworks();
   const [deletingId, setDeletingId] = useState(null);
   const [viewLanguage, setViewLanguage] = useState('ko');
-
-  const handleBackToDashboard = () => {
-    navigate('/admin/dashboard');
-  };
+  const [selectedExhibitionType, setSelectedExhibitionType] = useState('all');
 
   const handleEditBiography = () => {
     navigate('/admin/profile/biography/edit');
@@ -327,6 +308,32 @@ const ProfileManagement = () => {
 
   const handleEditExhibition = (id) => {
     navigate(`/admin/profile/exhibition/edit/${id}`);
+  };
+
+  const handleBackToDashboard = () => {
+    navigate('/admin/dashboard');
+  };
+
+  const handleAddAward = () => {
+    navigate('/admin/profile/award/add');
+  };
+
+  const handleEditAward = id => {
+    navigate(`/admin/profile/award/edit/${encodeURIComponent(id)}`);
+  };
+
+  const handleDeleteAward = async id => {
+    if (!window.confirm('정말 이 선정 항목을 삭제하시겠습니까?')) return;
+    const awards = profile.awardItems || DEFAULT_AWARD_ITEMS;
+    try {
+      const result = await updateAwardItems(awards.filter(award => String(award.id) !== String(id)));
+      if (!result.success) {
+        alert(`선정 항목 삭제에 실패했습니다: ${result.error}`);
+      }
+    } catch (error) {
+      console.error('선정 항목 삭제 중 오류:', error);
+      alert('선정 항목 삭제 중 오류가 발생했습니다.');
+    }
   };
 
   const handleDeleteExhibition = async (id) => {
@@ -352,13 +359,14 @@ const ProfileManagement = () => {
     }
     return 0;
   });
+  const filteredExhibitions = selectedExhibitionType === 'all'
+    ? sortedExhibitions
+    : sortedExhibitions.filter(exhibition => exhibition.type === selectedExhibitionType);
 
   if (isLoading) {
     return (
       <Container>
-        <Header>
-          <Title>프로필 관리</Title>
-        </Header>
+        <AdminPageHeader title="프로필 관리" backTo="/admin/dashboard" onBack={handleBackToDashboard} />
         <Content>
           <div style={{ textAlign: 'center', padding: '4rem' }}>
             <p>로딩 중...</p>
@@ -370,14 +378,7 @@ const ProfileManagement = () => {
 
   return (
     <Container>
-      <Header>
-        <Title>프로필 관리</Title>
-        <HeaderButtons>
-          <Button className="secondary" onClick={handleBackToDashboard}>
-            대시보드로 돌아가기
-          </Button>
-        </HeaderButtons>
-      </Header>
+      <AdminPageHeader title="프로필 관리" backTo="/admin/dashboard" onBack={handleBackToDashboard} />
       
       <Content>
         {/* 소개문 섹션 */}
@@ -406,6 +407,12 @@ const ProfileManagement = () => {
             </div>
           </SectionHeader>
           <SectionContent>
+            <p style={{ marginBottom: '1rem', color: '#555' }}>
+              대표 작품: {artworks.find(artwork => String(artwork.id) === String(profile.aboutArtworkId))?.title || artworks.find(artwork => artwork.image && artwork.title)?.title || '등록된 작품 없음'}
+            </p>
+            <p style={{ marginBottom: '1rem', color: '#555' }}>
+              소개글 제목: {(viewLanguage === 'ko' ? profile.biographyTitle : profile.biographyTitle_en) || '미입력'}
+            </p>
             <BiographyContainer>
               {viewLanguage === 'ko' ? (
                 <div>
@@ -435,13 +442,22 @@ const ProfileManagement = () => {
             </Button>
           </SectionHeader>
           <SectionContent>
-            {sortedExhibitions.length === 0 ? (
+            <YearFilter
+              years={['all', 'solo', 'group']}
+              selectedYear={selectedExhibitionType}
+              onSelect={setSelectedExhibitionType}
+              label="전시 유형 필터"
+              labels={{ all: '전체', solo: '개인', group: '그룹' }}
+            />
+            {filteredExhibitions.length === 0 ? (
               <EmptyState>
-                <h3>등록된 전시가 없습니다</h3>
-                <p>첫 번째 전시를 추가해보세요!</p>
-                <Button className="primary" onClick={handleAddExhibition}>
-                  전시 추가하기
-                </Button>
+                {sortedExhibitions.length === 0 ? (
+                  <>
+                    <h3>등록된 전시가 없습니다</h3>
+                    <p>첫 번째 전시를 추가해보세요!</p>
+                    <Button className="primary" onClick={handleAddExhibition}>전시 추가하기</Button>
+                  </>
+                ) : <p>해당 유형의 전시가 없습니다.</p>}
               </EmptyState>
             ) : (
               <ExhibitionTable>
@@ -455,7 +471,7 @@ const ProfileManagement = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {sortedExhibitions.map((exhibition) => (
+                  {filteredExhibitions.map((exhibition) => (
                     <tr key={exhibition.id}>
                       <td>
                         <TypeBadge className={exhibition.type}>
@@ -496,6 +512,60 @@ const ProfileManagement = () => {
                   ))}
                 </tbody>
               </ExhibitionTable>
+            )}
+          </SectionContent>
+        </Section>
+
+        <Section>
+          <SectionHeader>
+            <SectionTitle>선정 목록 ({(profile.awardItems || DEFAULT_AWARD_ITEMS).length}개)</SectionTitle>
+            <Button className="primary" onClick={handleAddAward}>선정 추가</Button>
+          </SectionHeader>
+          <SectionContent>
+            {(profile.awardItems || DEFAULT_AWARD_ITEMS).length === 0 ? (
+              <EmptyState><p>등록된 선정 목록이 없습니다.</p></EmptyState>
+            ) : (
+              <AwardTable>
+                <thead>
+                  <tr>
+                    <th>연도</th>
+                    <th>선정 내용 (한국어)</th>
+                    <th>선정 내용 (English)</th>
+                    <th>관리</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(profile.awardItems || DEFAULT_AWARD_ITEMS).map((award, index) => (
+                    <tr key={award.id || index}>
+                      <td>{award.year}</td>
+                      <td><TruncatedText title={award.content}>{award.content}</TruncatedText></td>
+                      <td><TruncatedText title={award.content_en}>{award.content_en || '영문 내용 없음'}</TruncatedText></td>
+                      <td>
+                        <ActionButtons>
+                          <IconButton
+                            type="button"
+                            className="edit"
+                            aria-label={`선정 ${index + 1} 수정`}
+                            title="수정"
+                            onClick={() => handleEditAward(award.id)}
+                          >
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M13 2.71754V4.74727H4V19.9703H20V9.82161H22V22H2V2.71754H13ZM21.707 3.43508L8.70703 16.6283L7.29297 15.1933L20.293 2L21.707 3.43508Z" fill="white"/>
+                            </svg>
+                          </IconButton>
+                          <IconButton
+                            type="button"
+                            className="delete"
+                            aria-label={`선정 ${index + 1} 삭제`}
+                            title="삭제"
+                            onClick={() => handleDeleteAward(award.id)}
+                          />
+                        </ActionButtons>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </AwardTable>
             )}
           </SectionContent>
         </Section>

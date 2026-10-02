@@ -1,5 +1,6 @@
+import { TransitionLink } from './PageTransition';
 import React, { useState, useRef, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { useLanguage } from '../contexts/LanguageContext';
 import { t } from '../utils/translations';
@@ -25,7 +26,7 @@ const HeaderContainer = styled.header`
   }
 `;
 
-const Logo = styled(Link)`
+const Logo = styled(TransitionLink)`
   font-size: 1.2rem;
   font-weight: 500;
   color: #333;
@@ -50,7 +51,7 @@ const Navigation = styled.nav`
   }
 `;
 
-const NavLink = styled(Link)`
+const NavLink = styled(TransitionLink)`
   font-size: 1rem;
   color: #333;
   text-decoration: none;
@@ -235,7 +236,7 @@ const MobileNavSection = styled.div`
   padding-top: 2rem;
 `;
 
-const MobileNavLink = styled(Link)`
+const MobileNavLink = styled(TransitionLink)`
   font-size: 1.5rem;
   color: #333;
   text-decoration: none;
@@ -356,11 +357,12 @@ const Header = () => {
         </Logo>
         
         <Navigation className="creato-light">
+          <NavLink to="/">Home</NavLink>
+          <NavLink to="/works" $isActive={location.pathname === '/works'}>
+            Works
+          </NavLink>
           <NavLink to="/about" $isActive={location.pathname === '/about'}>
             {t('navigation.about', language)}
-          </NavLink>
-          <NavLink to="/works" $isActive={location.pathname === '/works'}>
-            {t('navigation.works', language)}
           </NavLink>
           <NavLink to="/contact" $isActive={location.pathname === '/contact'}>
             {t('navigation.contact', language)}
@@ -395,6 +397,15 @@ const Header = () => {
       <MobileMenu show={isMobileMenuOpen} ref={mobileMenuRef}>
         <MobileMenuContent>
           <MobileNavSection>
+            <MobileNavLink to="/" onClick={() => setIsMobileMenuOpen(false)}>Home</MobileNavLink>
+            <MobileNavLink
+              to="/works"
+              $isActive={location.pathname === '/works'}
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Works
+              {location.pathname === '/works' && <CheckIcon className="check-icon" />}
+            </MobileNavLink>
             <MobileNavLink 
               to="/about" 
               $isActive={location.pathname === '/about'}
@@ -402,14 +413,6 @@ const Header = () => {
             >
               {t('navigation.about', language)}
               {location.pathname === '/about' && <CheckIcon className="check-icon" />}
-            </MobileNavLink>
-            <MobileNavLink 
-              to="/works" 
-              $isActive={location.pathname === '/works'}
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              {t('navigation.works', language)}
-              {location.pathname === '/works' && <CheckIcon className="check-icon" />}
             </MobileNavLink>
             <MobileNavLink 
               to="/contact" 
